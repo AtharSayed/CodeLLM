@@ -11,4 +11,4 @@ Before running the script, ensure you have the following Python libraries instal
   You can install NLTK using pip:
 
   ```bash
-  pip install nltk
+pip install -r requirements.txt
