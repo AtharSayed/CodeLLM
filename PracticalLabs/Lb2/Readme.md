@@ -4,11 +4,11 @@ This repository contains a Python script for performing text processing tasks us
 
 ## Requirements
 
-Before running the script, ensure you have the following Python libraries installed:
+Before running the script, you need to install the required Python libraries. You can install all dependencies at once using the `requirements.txt` file.
 
-- **NLTK** (Natural Language Toolkit): A powerful library for NLP tasks.
-  
-  You can install NLTK using pip:
+### 1. Install Dependencies
 
-  ```bash
+To install the required libraries, simply run:
+
+```bash
 pip install -r requirements.txt
