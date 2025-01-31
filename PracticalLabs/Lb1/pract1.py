@@ -21,7 +21,7 @@ def tokenize_text_file(file_path):
 
 if __name__ == "__main__":
     # Specify the path to your text file
-    file_path = r"F:\M.Tech_CollgeMaterials\CodeLLM\PracticalLabs\Sampletxt.txt"  # Update the path
+    file_path = r"F:\M.Tech_CollgeMaterials\CodeLLM\PracticalLabs\Lb1\Sample.txt"  # Update the path
 
     # Call the function to tokenize the file content
     tokens = tokenize_text_file(file_path)
