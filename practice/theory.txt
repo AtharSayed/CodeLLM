@@ -1,0 +1,46 @@
+1. Tokenization & Stopword Removal
+Why is stopword removal crucial in NLP? Stopword removal helps in reducing the size of the dataset and removes irrelevant words like "the," "is," "and," etc., which do not carry meaningful information. This improves computational efficiency by focusing on more informative words, making it easier to analyze the important content in a text. It also helps in reducing noise, leading to better performance in tasks like text classification, sentiment analysis, and information retrieval.
+
+In which scenarios would removing stopwords be harmful instead of beneficial? Removing stopwords can be harmful in scenarios where stopwords carry semantic value. For example:
+
+Machine translation: Stopwords are often necessary for accurate translations between languages.
+Text generation or creative writing: Removing stopwords could make the output less fluent and natural.
+Sentiment analysis in certain contexts: Some stopwords like "not" or "never" can change the meaning of a sentence (e.g., "not good" vs. "good"), so removing them may distort sentiment interpretation.
+If the given text contains multi-word phrases (e.g., "machine learning", "artificial intelligence"), how can a simple tokenizer affect their meaning? A simple tokenizer might split multi-word phrases like "machine learning" or "artificial intelligence" into separate tokens ("machine," "learning," "artificial," "intelligence"), losing the context and meaning of these compound terms. A more advanced tokenizer would recognize these phrases as single tokens, preserving the intended meaning of the phrases in context.
+
+2. Stemming vs. Lemmatization
+Suppose you stem and lemmatize the word "running". Why might a lemmatized output be more suitable for certain NLP tasks like text summarization or search engines?
+
+Stemming reduces words to their root forms (e.g., "running" -> "run") but does not guarantee a valid word. It might lead to errors in meaning or readability.
+Lemmatization transforms a word into its base form (e.g., "running" -> "run"), and it ensures the word is valid. For tasks like text summarization or search engines, lemmatization is more suitable because it retains the correct meaning and helps in achieving more precise results.
+What are some real-world applications where stemming is preferred over lemmatization?
+
+Information retrieval: Stemming is useful in search engines, where you want to index documents and retrieve relevant results quickly. Speed and efficiency are prioritized over linguistic accuracy.
+Text classification: When the primary goal is to cluster similar words or categorize text, stemming can help reduce dimensionality and improve processing efficiency, as long as the exact word forms aren't essential.
+3. One-Hot Encoding & Bag of Words
+In a large NLP dataset, why does one-hot encoding become inefficient? One-hot encoding creates a vector with as many elements as the size of the vocabulary, leading to very high-dimensional vectors (sparse matrices) as the vocabulary grows. This increases memory usage and computational cost, making it inefficient for large datasets.
+
+How does word embedding (e.g., Word2Vec) solve this problem? Word embeddings like Word2Vec map words to a continuous vector space, where words with similar meanings are closer together. This results in more compact and dense representations compared to one-hot encoding. Word embeddings capture semantic relationships and are much more memory and computationally efficient, especially for large datasets.
+
+If you implement a Bag of Words model, why does it fail to capture word order? Bag of Words (BoW) treats the text as a set of words without considering their order, so it captures only the frequency of words. It loses important contextual information related to the position of words, such as syntax and grammar, which can affect the meaning of the text.
+
+Suggest an enhancement to BoW that considers context. One enhancement to BoW is using n-grams (like bigrams, trigrams, etc.), which capture a sequence of words together and can retain some local context. Another enhancement is using word embeddings or contextual embeddings (e.g., BERT) that capture semantic meaning while considering the position of words in sentences.
+
+4. Named Entity Recognition (NER) & POS Tagging
+If the NER system extracts "machine translation" as a named entity but fails to recognize "artificial intelligence", what might be the possible reasons? Possible reasons include:
+
+Training data: The system may have been trained on a dataset where "machine translation" was labeled as a named entity, but "artificial intelligence" was not. Inadequate or biased training data can lead to such discrepancies.
+Context: "Artificial intelligence" might not have been recognized because it wasn't used in a context that clearly identified it as a named entity.
+Model limitations: Some NER systems may have difficulty identifying newer or less common named entities if not properly trained on a diverse set of examples.
+Explain how POS tagging can assist Named Entity Recognition (NER) in improving accuracy. POS tagging assigns parts of speech (e.g., noun, verb, adjective) to each word. This can help NER systems by:
+
+Differentiating between entities (usually proper nouns) and common nouns.
+Improving context understanding: A noun phrase, like "artificial intelligence," may be tagged as a noun phrase, which can help the NER system identify it as a named entity.
+5. N-grams & Context Analysis
+Given the N-grams: ("natural", "language") and ("language", "processing"), why might trigrams provide more context than bigrams in NLP tasks? Trigrams, which consist of three consecutive words, capture more context than bigrams (two consecutive words). In the case of ("natural", "language", "processing"), a trigram would be able to preserve the full context of the phrase, such as "natural language processing," which has a distinct meaning in the field of NLP. Bigrams might not fully capture this context and could confuse it with other phrases like "language processing."
+
+In the text provided, what are some potential drawbacks of using fixed-size N-grams for analyzing long sentences? Using fixed-size N-grams for long sentences can have several drawbacks:
+
+Loss of long-range dependencies: Fixed-size N-grams only capture local context, missing out on long-range dependencies between words that can affect meaning.
+Sparsity: The number of possible N-grams increases exponentially with sentence length, leading to sparse data, especially in longer sentences.
+Complexity: The model can become computationally expensive and harder to manage as the N-gram size increases, especially for very large corpora.
