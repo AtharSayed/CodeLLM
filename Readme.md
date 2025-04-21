@@ -14,4 +14,4 @@ Welcome to **CodeLLM**! This repository contains various implementations and exp
 1. **Clone the repository** to your local machine:
 
    ```bash
-   git clone https://github.com/yourusername/CodeLLM.git
+   git clone https://github.com/AtharSayed/CodeLLM.git
