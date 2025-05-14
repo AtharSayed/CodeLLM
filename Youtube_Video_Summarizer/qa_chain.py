@@ -11,6 +11,10 @@ def setup_qa_chain(transcript):
     vectordb = Chroma.from_texts(chunks, embedding=embeddings)
     retriever = vectordb.as_retriever()
 
-    llm = Ollama(model="mistral")
+    llm = Ollama(
+    model="mistral:7b-instruct-q4_0",
+    base_url="http://localhost:11434",  # Explicit connection
+    temperature=0.3  # Less random answers
+)
     qa_chain = RetrievalQA.from_chain_type(llm=llm, retriever=retriever)
     return qa_chain
