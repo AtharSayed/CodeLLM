@@ -1,7 +1,8 @@
 gradio
-pytube
+yt-dlp
 openai-whisper
 torch
-langchain
-chromadb
+langchain-community
 sentence-transformers
+ollama
+chromadb
