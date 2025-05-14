@@ -1,0 +1,7 @@
+gradio
+pytube
+openai-whisper
+torch
+langchain
+chromadb
+sentence-transformers
