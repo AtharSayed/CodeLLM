@@ -1,4 +1,4 @@
-# 🎥 Youtube Video Summarizer
+# 🎥 Youtube Video Analyzer
 
 This project is a submodule of the [CodeLLM](https://github.com/AtharSayed/CodeLLM) repo. It provides a clean Gradio interface to **transcribe and summarize YouTube videos**, all **locally and efficiently**, using:
 
