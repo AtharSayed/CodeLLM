@@ -17,13 +17,13 @@ def transcribe_and_summarize(url):
     return transcript, summary
 
 with gr.Blocks() as demo:
-    gr.Markdown("## 🚀 YouTube Transcriber + Summarizer (Faster Whisper + Mistral via Ollama)")
+    gr.Markdown("## 🚀IntelliTube (Faster Whisper + Mistral via Ollama)")
     
     url = gr.Textbox(label="YouTube URL", placeholder="Paste URL here...")
     transcript_output = gr.Textbox(label="Transcript", lines=10)
     summary_output = gr.Textbox(label="Summary", lines=7)
     
-    btn = gr.Button("Transcribe & Summarize", variant="primary")
+    btn = gr.Button("Summarize", variant="primary")
     
     btn.click(
         transcribe_and_summarize,
