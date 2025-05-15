@@ -1,115 +1,56 @@
-import whisper
-import subprocess
-import os
-import time
-from typing import Optional
-from functools import lru_cache
+# import whisper
+# import subprocess
+# import os
+# import time
 
-@lru_cache(maxsize=1)
-def load_whisper_model():
-    """Cache the loaded model to avoid reloading"""
-    print("⚙️ Loading Whisper model...")
-    start = time.time()
-    model = whisper.load_model(
-        "tiny",
-        device="cpu",
-        download_root="./whisper_models"
-    )
-    print(f"✅ Model loaded in {time.time()-start:.1f}s")
-    return model
+# def download_and_transcribe_youtube(url: str) -> str:
+#     """Simplified version that always works"""
+#     try:
+#         audio_file = "temp_audio.mp3"
+        
+#         # Clean previous file
+#         if os.path.exists(audio_file):
+#             os.remove(audio_file)
+        
+#         # Download (15s timeout)
+#         subprocess.run([
+#             "yt-dlp",
+#             "-x",
+#             "--audio-format", "mp3",
+#             "--audio-quality", "0",
+#             "--quiet",
+#             "--no-warnings",
+#             "-o", audio_file,
+#             url
+#         ], timeout=15, check=True)
+        
+#         if not os.path.exists(audio_file):
+#             return "❌ Download failed"
+        
+#         # Load model (tiny.en is fastest)
+#         model = whisper.load_model("tiny.en", device="cpu")
+        
+#         # Fast transcription (30s timeout)
+#         start = time.time()
+#         result = model.transcribe(
+#             audio_file,
+#             fp16=False,
+#             language="en",
+#             verbose=False,
+#             temperature=0.0,
+#             best_of=1,
+#             beam_size=1,
+#             patience=1.0
+#         )
+#         print(f"✓ Transcription took {time.time()-start:.1f}s")
+        
+#         return result["text"]
+        
+#     except subprocess.TimeoutExpired:
+#         return "❌ Download too slow"
+#     except Exception as e:
+#         return f"❌ Error: {str(e)}"
+#     finally:
+#         if os.path.exists(audio_file):
+#             os.remove(audio_file)
 
-def download_audio(url: str, output: str, timeout: int = 60) -> bool:
-    """Download audio with timeout handling"""
-    try:
-        print("⬇️ Downloading audio...")
-        start = time.time()
-        subprocess.run([
-            "yt-dlp",
-            "-x",
-            "--audio-format", "mp3",
-            "--audio-quality", "0",
-            "--quiet",
-            "-o", output,
-            url
-        ], check=True, timeout=timeout)
-        print(f"✅ Download completed in {time.time()-start:.1f}s")
-        return True
-    except subprocess.TimeoutExpired:
-        print(f"⌛ Download timed out after {timeout}s")
-        return False
-    except Exception as e:
-        print(f"❌ Download failed: {str(e)}")
-        return False
-
-def transcribe_audio(file_path: str, timeout: int = 120) -> Optional[str]:
-    """Transcribe with timeout protection"""
-    try:
-        print("🔊 Starting transcription...")
-        start = time.time()
-        
-        # Use event to handle timeout
-        from threading import Event, Thread
-        result = {}
-        event = Event()
-        
-        def _transcribe():
-            try:
-                model = load_whisper_model()
-                result['text'] = model.transcribe(
-                    file_path,
-                    fp16=False,
-                    language="en",
-                    verbose=True,
-                    temperature=0.0,
-                    best_of=1,
-                    beam_size=1
-                )["text"]
-            except Exception as e:
-                result['error'] = str(e)
-            finally:
-                event.set()
-        
-        thread = Thread(target=_transcribe)
-        thread.start()
-        event.wait(timeout=timeout)
-        
-        if not event.is_set():
-            raise TimeoutError(f"Transcription timed out after {timeout}s")
-            
-        if 'error' in result:
-            raise Exception(result['error'])
-            
-        print(f"✅ Transcription completed in {time.time()-start:.1f}s")
-        return result['text']
-        
-    except Exception as e:
-        print(f"❌ Transcription failed: {str(e)}")
-        return None
-
-def download_and_transcribe_youtube(url: str, output: str = "audio.mp3") -> str:
-    """Main processing pipeline with timeout protection"""
-    try:
-        # Clean previous files
-        if os.path.exists(output):
-            os.remove(output)
-        
-        # Download with timeout
-        if not download_audio(url, output):
-            return "❌ Audio download failed"
-        
-        if not os.path.exists(output):
-            return "❌ Downloaded file not found"
-        
-        # Transcribe with timeout
-        text = transcribe_audio(output)
-        if text is None:
-            return "❌ Transcription failed"
-        
-        # Clean up
-        os.remove(output)
-        return text
-        
-    except Exception as e:
-        if os.path.exists(output):
-            os.remove(output)
-        return f"❌ Processing failed: {str(e)}"
