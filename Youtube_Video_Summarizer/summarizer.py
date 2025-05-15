@@ -1,3 +1,5 @@
+# Summarization for the video transcript 
+
 from langchain_ollama import OllamaLLM
 from langchain.chains.summarize import load_summarize_chain
 from langchain_core.documents import Document
