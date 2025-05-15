@@ -53,4 +53,14 @@
 #     finally:
 #         if os.path.exists(audio_file):
 #             os.remove(audio_file)
+# test_qa.py
+
+
+## **Test code to check if transcriber is getting fetched into qasetp for qa**
+
+# from qa_chain import setup_qa
+
+# transcript = "Your test transcript here. Add a few lines of meaningful text so it's not empty."
+# qa = setup_qa(transcript)
+# print(qa.run("What is this about?"))
 
