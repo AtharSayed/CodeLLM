@@ -35,4 +35,4 @@ Give it any YouTube URL, and it will:
 
 ```bash
 git clone https://github.com/AtharSayed/CodeLLM.git
-cd CodeLLM/Youtube_Video_Summarizer
+cd CodeLLM/Intellitube
