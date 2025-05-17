@@ -2,13 +2,16 @@ import gradio as gr
 from fast_transcriber import transcribe_youtube
 from summarizer import summarize
 from qa_chain import setup_qa
+from ytsenti import fetch_comments_scrape, analyze_sentiment  # ✅ Import sentiment functions
+
 import threading
 import traceback
 
-# Global variable to store transcript and QA chain
+# Global variables
 stored_transcript = None
 qa_chain = None
 
+# Transcription & Summarization
 def transcribe_and_summarize(url):
     global stored_transcript, qa_chain
     stored_transcript = None
@@ -24,9 +27,10 @@ def transcribe_and_summarize(url):
     except Exception as e:
         summary = f"❌ Summary Error: {str(e)}"
 
-    stored_transcript = transcript  # Save for QA
-    return transcript, summary, "", "✅ Transcript and summary ready. You can ask a question now."
+    stored_transcript = transcript
+    return transcript, summary, "", "✅ Transcript and summary ready. You can ask a question now.", ""
 
+# Question Answering
 def answer_question(question):
     global stored_transcript, qa_chain
 
@@ -36,7 +40,6 @@ def answer_question(question):
     if stored_transcript is None:
         return "❌ No transcript available. Please process a video first."
 
-    # Initialize QA chain if not exists
     if qa_chain is None:
         try:
             qa_chain = setup_qa(stored_transcript)
@@ -44,10 +47,9 @@ def answer_question(question):
             return f"❌ Failed to initialize QA system: {str(e)}"
 
     try:
-        # Direct synchronous call with timeout handling
         result = qa_chain.invoke(
             {"query": question},
-            config={"max_execution_time": 90}  # 90 second timeout
+            config={"max_execution_time": 90}
         )
         return result.get("result", "No answer could be generated.")
         
@@ -56,6 +58,30 @@ def answer_question(question):
     except Exception as e:
         return f"❌ Error answering question: {str(e)}"
 
+# Comment Sentiment Analysis
+def analyze_comments_sentiment(url):
+    comments = fetch_comments_scrape(url, max_comments=50)
+    if not comments:
+        return "❌ Failed to fetch comments or no comments found."
+
+    summary, detailed = analyze_sentiment(comments)
+    
+    summary_text = (
+        f"🟢 POSITIVE: {summary['POSITIVE']}\n"
+        f"🟡 NEUTRAL : {summary['NEUTRAL']}\n"
+        f"🔴 NEGATIVE: {summary['NEGATIVE']}\n\n"
+    )
+
+    if summary["POSITIVE"] > summary["NEGATIVE"]:
+        summary_text += "✅ Overall Sentiment: Mostly Positive"
+    elif summary["NEGATIVE"] > summary["POSITIVE"]:
+        summary_text += "⚠️ Overall Sentiment: Mostly Negative"
+    else:
+        summary_text += "📊 Overall Sentiment: Mixed or Neutral"
+
+    return summary_text
+
+# Gradio UI
 with gr.Blocks() as demo:
     with gr.Column():
         gr.Markdown("<h1 style='text-align: center;'>🚀 IntelliTube</h1>", elem_id="title")
@@ -74,16 +100,26 @@ with gr.Blocks() as demo:
         question = gr.Textbox(label="❓ Ask a Question", placeholder="e.g. What is the video about?")
         answer_output = gr.Textbox(label="💡 Answer", lines=3, interactive=False)
 
+        sentiment_button = gr.Button("🧠 Analyze Comment Sentiment")
+        sentiment_output = gr.Textbox(label="💬 Comment Sentiment", lines=10, interactive=False)
+
+        # Event bindings
         btn.click(
             transcribe_and_summarize,
             inputs=url,
-            outputs=[transcript_output, summary_output, answer_output, qa_status]
+            outputs=[transcript_output, summary_output, answer_output, qa_status, sentiment_output]
         )
 
         question.submit(
             answer_question,
             inputs=question,
             outputs=answer_output
+        )
+
+        sentiment_button.click(
+            analyze_comments_sentiment,
+            inputs=url,
+            outputs=sentiment_output
         )
 
 if __name__ == "__main__":
