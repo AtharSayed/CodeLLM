@@ -8,6 +8,8 @@ Welcome to **CodeLLM**! This repository contains various implementations and exp
 - **Word Frequency Analysis**: Counting and visualizing word frequency using custom methods and built-in tools.
 - **Bag-of-Words (BoW)**: A simple representation technique that converts text data into a matrix of word occurrences.
 - **TF-IDF (Term Frequency - Inverse Document Frequency)**: A more advanced text representation that calculates the importance of each word in a document relative to its frequency in the entire corpus.
+- **RAG(Retrieval Augumented Generation)**:LangChain-based Retrieval-Augmented Generation (RAG) for Q&A System
+- **Intellitube**: Intellitube (Youtube Video Analyzer) provides a clean Gradio interface to transcribe,summarize and interact with YouTube videos, all locally and efficiently, using Ollama.
 
 ## Installation
 
