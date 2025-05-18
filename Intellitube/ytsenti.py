@@ -108,5 +108,48 @@ def main():
         print(f"{i}. {comment}")
         print(f"   Sentiment: {label}, Score: {round(score, 3)}")
 
+# Intent classification pipeline
+intent_classifier = pipeline(
+    "text-classification",
+    model="bhadresh-savani/distilbert-base-uncased-emotion",  # Temp model: classify emotion/intent-like labels
+    device=device
+)
+# Analyze intent of comments
+def analyze_intent(comments):
+    print("✅ Performing intent classification...")
+    intent_summary = {}
+    intent_detailed = []
+
+    # Intent label mapping
+    INTENT_MAP = {
+        "joy": "Praise",
+        "anger": "Complaint",
+        "sadness": "Complaint",
+        "surprise": "Request",
+        "love": "Praise",
+        "fear": "Concern",
+    }
+
+    for comment in comments:
+        try:
+            result = intent_classifier(comment)[0]
+            raw_label = result["label"]
+            score = result["score"]
+
+            # Normalize label using intent map
+            label = INTENT_MAP.get(raw_label, raw_label)
+
+            # Count summary
+            if label not in intent_summary:
+                intent_summary[label] = 0
+            intent_summary[label] += 1
+
+            intent_detailed.append((comment, label, score))
+        except Exception as e:
+            intent_detailed.append((comment, "ERROR", 0.0))
+
+    return intent_summary, intent_detailed
+
+
 if __name__ == "__main__":
     main()
