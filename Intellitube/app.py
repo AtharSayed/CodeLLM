@@ -100,7 +100,7 @@ with gr.Blocks() as demo:
         question = gr.Textbox(label="❓ Ask a Question", placeholder="e.g. What is the video about?")
         answer_output = gr.Textbox(label="💡 Answer", lines=3, interactive=False)
 
-        sentiment_button = gr.Button("🧠 Analyze Comment Sentiment")
+        sentiment_button = gr.Button("🧠 Analyze YouTube Comments for sentiment")
         sentiment_output = gr.Textbox(label="💬 Comment Sentiment", lines=10, interactive=False)
 
         # Event bindings
