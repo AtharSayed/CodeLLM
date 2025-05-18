@@ -2,7 +2,7 @@ import gradio as gr
 from fast_transcriber import transcribe_youtube
 from summarizer import summarize
 from qa_chain import setup_qa
-from ytsenti import fetch_comments_scrape, analyze_sentiment  # ✅ Import sentiment functions
+from ytsenti import fetch_comments_scrape, analyze_sentiment,analyze_intent  # ✅ Import sentiment functions
 
 import threading
 import traceback
@@ -64,22 +64,29 @@ def analyze_comments_sentiment(url):
     if not comments:
         return "❌ Failed to fetch comments or no comments found."
 
-    summary, detailed = analyze_sentiment(comments)
-    
-    summary_text = (
-        f"🟢 POSITIVE: {summary['POSITIVE']}\n"
-        f"🟡 NEUTRAL : {summary['NEUTRAL']}\n"
-        f"🔴 NEGATIVE: {summary['NEGATIVE']}\n\n"
+    sentiment_summary, _ = analyze_sentiment(comments)
+    intent_summary, _ = analyze_intent(comments)
+
+    # Build sentiment summary
+    sentiment_text = (
+        f"🟢 POSITIVE: {sentiment_summary['POSITIVE']}\n"
+        f"🟡 NEUTRAL : {sentiment_summary['NEUTRAL']}\n"
+        f"🔴 NEGATIVE: {sentiment_summary['NEGATIVE']}\n\n"
     )
 
-    if summary["POSITIVE"] > summary["NEGATIVE"]:
-        summary_text += "✅ Overall Sentiment: Mostly Positive"
-    elif summary["NEGATIVE"] > summary["POSITIVE"]:
-        summary_text += "⚠️ Overall Sentiment: Mostly Negative"
+    if sentiment_summary["POSITIVE"] > sentiment_summary["NEGATIVE"]:
+        sentiment_text += "✅ Overall Sentiment: Mostly Positive\n\n"
+    elif sentiment_summary["NEGATIVE"] > sentiment_summary["POSITIVE"]:
+        sentiment_text += "⚠️ Overall Sentiment: Mostly Negative\n\n"
     else:
-        summary_text += "📊 Overall Sentiment: Mixed or Neutral"
+        sentiment_text += "📊 Overall Sentiment: Mixed or Neutral\n\n"
 
-    return summary_text
+    # Build intent summary
+    sentiment_text += "🎯 Intent Summary:\n"
+    for intent, count in intent_summary.items():
+        sentiment_text += f"🔹 {intent.upper()}: {count}\n"
+
+    return sentiment_text
 
 # Gradio UI
 with gr.Blocks() as demo:
