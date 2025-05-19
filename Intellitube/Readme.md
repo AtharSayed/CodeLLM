@@ -1,6 +1,6 @@
 # 🎥 Intellitube (Youtube Video Analyzer)
 
-This project is a submodule of the [CodeLLM](https://github.com/AtharSayed/CodeLLM) repo. It provides a clean Gradio interface to **transcribe,summarize  and interact with YouTube videos**, all **locally and efficiently**, using:
+This project  provides a clean Gradio interface to **transcribe,summarize  and interact with YouTube videos**, all **locally and efficiently**, using:
 
 - 🧠 **Faster Whisper** for fast, accurate transcription
 - 🤖 **Mistral model via Ollama** for efficient local summarization and Q&A
