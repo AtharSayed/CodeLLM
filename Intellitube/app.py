@@ -7,6 +7,7 @@ import threading
 import traceback
 import json
 import os
+import re
 from datetime import datetime
 
 # Global variables
@@ -14,11 +15,28 @@ stored_transcript = None
 qa_chain = None
 question_history = []
 
-# Transcription & Summarization
+# ---------------------------
+# ✅ YouTube URL Validation
+# ---------------------------
+def is_valid_youtube_url(url):
+    if not url:
+        return False
+    youtube_regex = re.compile(
+        r"(https?://)?(www\.)?(youtube\.com|youtu\.?be)/.+"
+    )
+    return youtube_regex.match(url) is not None
+
+# ---------------------------
+# 🔁 Transcription & Summarization
+# ---------------------------
 def transcribe_and_summarize(url, progress=gr.Progress()):
     global stored_transcript, qa_chain
     stored_transcript = None
     qa_chain = None
+
+    if not is_valid_youtube_url(url):
+        return "", "", "", "❌ Invalid or missing YouTube URL.", "", None
+
     progress(0, desc="Starting transcription...")
 
     try:
@@ -41,7 +59,9 @@ def transcribe_and_summarize(url, progress=gr.Progress()):
     except Exception as e:
         return "", "", "", f"❌ Error: {str(e)}", "", None
 
-# Question Answering
+# ---------------------------
+# ❓ Question Answering
+# ---------------------------
 def answer_question(question):
     global stored_transcript, qa_chain, question_history
 
@@ -71,7 +91,9 @@ def answer_question(question):
     except Exception as e:
         return f"❌ Error answering question: {str(e)}", format_question_history()
 
-# Format question history as readable text
+# ---------------------------
+# 📝 Question History Formatter
+# ---------------------------
 def format_question_history():
     if not question_history:
         return "No questions asked yet."
@@ -80,8 +102,13 @@ def format_question_history():
         history_text += f"**Q{i}:** {item['question']}\n**A{i}:** {item['answer']}\n\n"
     return history_text
 
-# Comment Sentiment Analysis
+# ---------------------------
+# 💬 Comment Sentiment Analysis
+# ---------------------------
 def analyze_comments_sentiment(url, progress=gr.Progress()):
+    if not is_valid_youtube_url(url):
+        return "❌ Invalid or missing YouTube URL.", None
+
     progress(0, desc="Fetching comments...")
     comments = fetch_comments_scrape(url, max_comments=50)
     if not comments:
@@ -111,7 +138,9 @@ def analyze_comments_sentiment(url, progress=gr.Progress()):
     progress(1.0, desc="Completed!")
     return sentiment_text, None
 
-# Save outputs to file
+# ---------------------------
+# 💾 Save Output to File
+# ---------------------------
 def save_outputs(transcript, summary, sentiment):
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     output_dir = "intellitube_outputs"
@@ -130,7 +159,9 @@ def save_outputs(transcript, summary, sentiment):
     
     return f"✅ Saved to {file_path}"
 
-# Clear all inputs and outputs
+# ---------------------------
+# 🧹 Clear Everything
+# ---------------------------
 def clear_all():
     global stored_transcript, qa_chain, question_history
     stored_transcript = None
@@ -138,8 +169,10 @@ def clear_all():
     question_history = []
     return "", "", "", "", "", "No questions asked yet.", None
 
-# Gradio UI
-with gr.Blocks(theme=gr.themes.Soft(), css="""
+# ---------------------------
+# 🚀 Gradio UI
+# ---------------------------
+with gr.Blocks(theme=gr.themes.Soft(), css=""" 
     #title { 
         font-family: 'Inter', sans-serif; 
         font-size: 2.5em; 
