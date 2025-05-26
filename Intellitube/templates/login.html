@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IntelliTube - Login</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            background-image: url('{{ url_for("static", filename="images/loginpagewallpaperbacg.jpg") }}');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            color: white;
+        }
+        .card {
+            max-width: 400px;
+            width: 90%;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+        }
+        .card-body {
+            display: flex;                
+            flex-direction: column;       
+            align-items: center;          
+            justify-content: center;      
+        }
+        .logo-img {
+            max-width: 80%;               
+            height: auto;                 
+        }
+        .alert {
+            width: 100%;
+        }
+        .form-control {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid #444;
+        }
+        .form-control:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        .form-text {
+            color: #aaa !important;
+        }
+        a {
+            color: #4e9af1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container d-flex align-items-center justify-content-center vh-100">
+        <div class="card shadow">
+            <div class="card-body text-center">
+                <img src="{{ url_for('static', filename='images/1200px-Stark_Industries.png') }}" alt="IntelliTube Logo" class="logo-img mb-3"> 
+                <h5 class="card-title">IntelliTube Login</h5>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }}" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <form method="POST" action="{{ url_for('login') }}">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Login</button>
+                    <div class="text-center mt-3">
+                        <small>Don't have an account? <a href="{{ url_for('signup') }}">Sign up</a></small>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
