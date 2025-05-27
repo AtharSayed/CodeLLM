@@ -21,10 +21,9 @@
             color: var(--light-color);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center; /* Added for horizontal centering */
-            overflow-x: hidden; /* Added for consistency */
+            display: flex; /* Kept flex for vertical centering */
+            align-items: center; /* Kept for vertical centering */
+            overflow-x: hidden;
         }
         
         .auth-card {
@@ -36,12 +35,17 @@
             overflow: hidden;
             max-width: 600px;
             width: 100%;
+            margin: auto; /* This is the key change for horizontal centering */
         }
         
         .auth-header {
             background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
             padding: 2rem;
             text-align: center;
+        }
+
+        .auth-header h3 {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
         }
         
         .auth-body {
@@ -115,6 +119,17 @@
             transition: all 0.3s;
         }
         
+        .password-strength-text {
+            font-size: 0.8rem;
+            margin-top: 5px;
+            text-align: right;
+            font-weight: 600;
+        }
+
+        .text-danger { color: #dc3545; }
+        .text-warning { color: #fd7e14; }
+        .text-success { color: #28a745; }
+        
         .password-requirements {
             font-size: 0.8rem;
             color: rgba(255, 255, 255, 0.6);
@@ -134,10 +149,9 @@
             color: var(--accent-color);
         }
 
-        /* Animated Background Elements from home.html */
         .position-absolute {
             position: absolute;
-            z-index: -1; /* Ensures background elements are behind content */
+            z-index: -1;
         }
         .position-absolute.top-0 { top: 0; }
         .position-absolute.start-0 { left: 0; }
@@ -213,6 +227,7 @@
                                 <div class="password-strength mt-2">
                                     <div class="strength-meter" id="strengthMeter"></div>
                                 </div>
+                                <div class="password-strength-text" id="strengthText"></div>
                                 <div class="password-requirements">
                                     <div class="requirement" id="lengthReq">
                                         <i class="fas fa-circle"></i> At least 8 characters
@@ -281,6 +296,7 @@
         document.getElementById('password').addEventListener('input', function() {
             const password = this.value;
             const strengthMeter = document.getElementById('strengthMeter');
+            const strengthText = document.getElementById('strengthText');
             const requirements = {
                 length: password.length >= 8,
                 upper: /[A-Z]/.test(password),
@@ -304,10 +320,22 @@
             strengthMeter.style.width = strengthPercent + '%';
             if (strengthPercent < 40) {
                 strengthMeter.style.backgroundColor = '#dc3545';
+                strengthText.textContent = 'Weak';
+                strengthText.className = 'password-strength-text text-danger';
             } else if (strengthPercent < 70) {
                 strengthMeter.style.backgroundColor = '#fd7e14';
+                strengthText.textContent = 'Medium';
+                strengthText.className = 'password-strength-text text-warning';
             } else {
                 strengthMeter.style.backgroundColor = '#28a745';
+                strengthText.textContent = 'Strong';
+                strengthText.className = 'password-strength-text text-success';
+            }
+
+            if (password.length === 0) {
+                strengthMeter.style.width = '0%';
+                strengthText.textContent = '';
+                strengthText.className = 'password-strength-text';
             }
             
             // Check password match
@@ -321,27 +349,46 @@
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
             const errorElement = document.getElementById('passwordMatchError');
+            const submitBtn = document.getElementById('submitBtn');
             
             if (confirmPassword && password !== confirmPassword) {
                 errorElement.style.display = 'block';
                 document.getElementById('confirmPassword').classList.add('is-invalid');
-                document.getElementById('submitBtn').disabled = true;
+                submitBtn.disabled = true;
             } else {
                 errorElement.style.display = 'none';
                 document.getElementById('confirmPassword').classList.remove('is-invalid');
-                document.getElementById('submitBtn').disabled = false;
+                const passwordInput = document.getElementById('password');
+                const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+                // Only enable submit if all password requirements are also met and terms are checked
+                submitBtn.disabled = !(passwordRegex.test(password) && password === confirmPassword && document.getElementById('terms').checked);
             }
         }
         
-        // Form validation
+        // Form validation and terms agreement check
         document.getElementById('signupForm').addEventListener('submit', function(e) {
             const password = document.getElementById('password').value;
+            const termsChecked = document.getElementById('terms').checked;
             const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
             
             if (!regex.test(password)) {
                 e.preventDefault();
                 alert('Password must be at least 8 characters long and include uppercase, lowercase, numbers, and special characters.');
             }
+            if (!termsChecked) {
+                e.preventDefault();
+                alert('You must agree to the Terms of Service and Privacy Policy.');
+            }
+        });
+
+        // Update submit button state when terms checkbox changes
+        document.getElementById('terms').addEventListener('change', function() {
+            checkPasswordMatch(); // Re-evaluate submit button state
+        });
+
+        // Initial check for submit button state on page load (in case form is pre-filled)
+        document.addEventListener('DOMContentLoaded', function() {
+            checkPasswordMatch();
         });
     </script>
 </body>
