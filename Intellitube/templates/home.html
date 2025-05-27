@@ -3,42 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IntelliTube</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>IntelliTube - AI-Powered Video Analysis</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            background-image: url('{{ url_for("static", filename="images/loginpagewallpaperbacg.jpg") }}');
-            background-size: cover;
-            background-position: center;
-            height: 100vh;
-            color: white;
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4cc9f0;
+            --dark-color: #1a1a2e;
+            --light-color: #f8f9fa;
         }
+        
+        body {
+            background: linear-gradient(135deg, var(--dark-color), #16213e);
+            color: var(--light-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
         .hero-section {
-            background-color: rgba(0, 0, 0, 0.7);
-            padding: 3rem;
-            border-radius: 10px;
+            background: rgba(26, 26, 46, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border: none;
+            padding: 12px 30px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(67, 97, 238, 0.3);
+        }
+        
+        .btn-outline-light {
+            border: 2px solid var(--light-color);
+            color: var(--light-color);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-light:hover {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            transform: translateY(-3px);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+        }
+        
+        .nav-pills .nav-link.active {
+            background-color: var(--primary-color);
+        }
+        
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .gradient-text {
+            background: linear-gradient(90deg, var(--accent-color), var(--primary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
     </style>
 </head>
 <body>
-    <div class="container d-flex align-items-center justify-content-center vh-100">
-        <div class="hero-section text-center">
-            <h1 class="display-4 mb-4">Welcome to IntelliTube</h1>
-            <p class="lead mb-5">Advanced YouTube video analysis with AI-powered transcription, summarization, and Q&A</p>
-            
-            {% if 'user_id' not in session %}
-                <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
-                    <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg px-4">Login</a>
-                    <a href="{{ url_for('signup') }}" class="btn btn-outline-light btn-lg px-4">Sign Up</a>
+    <!-- Animated Background Elements -->
+    <div class="position-absolute top-0 start-0 w-100 h-100 overflow-hidden" style="z-index: -1;">
+        <div class="position-absolute" style="top: 20%; left: 10%; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle, rgba(67, 97, 238, 0.1) 0%, rgba(67, 97, 238, 0) 70%);"></div>
+        <div class="position-absolute floating" style="top: 60%; right: 15%; width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, rgba(76, 201, 240, 0.1) 0%, rgba(76, 201, 240, 0) 70%); animation-delay: 0.5s;"></div>
+    </div>
+
+    <div class="container py-5">
+        <!-- Navigation -->
+        <nav class="navbar navbar-expand-lg navbar-dark mb-5">
+            <div class="container-fluid">
+                <a class="navbar-brand d-flex align-items-center" href="#">
+                    <i class="fas fa-robot me-2" style="font-size: 1.8rem; color: var(--accent-color);"></i>
+                    <span class="fs-3 fw-bold gradient-text">IntelliTube</span>
+                </a>
+                <div class="d-flex">
+                    <a href="{{ url_for('login') }}" class="btn btn-outline-light me-2">Login</a>
+                    <a href="{{ url_for('signup') }}" class="btn btn-primary">Sign Up</a>
                 </div>
-            {% else %}
-                <a href="http://127.0.0.1:7860" class="btn btn-primary btn-lg px-4">Go to IntelliTube</a>
-            {% endif %}
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <div class="row align-items-center py-5">
+            <div class="col-lg-6 mb-5 mb-lg-0">
+                <h1 class="display-3 fw-bold mb-4">Unlock <span class="gradient-text">Video Insights</span> with AI</h1>
+                <p class="lead mb-4">IntelliTube transforms YouTube videos into actionable intelligence with advanced transcription, summarization, and sentiment analysis powered by cutting-edge AI.</p>
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="{{ url_for('signup') }}" class="btn btn-primary btn-lg px-4">Get Started Free</a>
+                    <a href="#features" class="btn btn-outline-light btn-lg px-4">Learn More</a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="hero-section p-4 p-lg-5 text-center">
+                    <img src="{{ url_for('static', filename='images/ai-video-analysis.png') }}" alt="AI Video Analysis" class="img-fluid floating" style="max-height: 400px; animation-delay: 0.2s;">
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div id="features" class="row py-5 mt-5">
+            <div class="col-12 text-center mb-5">
+                <h2 class="fw-bold mb-3">Powerful Features</h2>
+                <p class="lead text-muted">Everything you need to extract maximum value from video content</p>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="hero-section h-100 p-4 text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-comment-dots"></i>
+                    </div>
+                    <h4>AI Transcription</h4>
+                    <p>Accurate, real-time transcription of any YouTube video with speaker identification.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="hero-section h-100 p-4 text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <h4>Sentiment Analysis</h4>
+                    <p>Understand audience emotions through advanced comment sentiment analysis.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="hero-section h-100 p-4 text-center">
+                    <div class="feature-icon">
+                        <i class="fas fa-question-circle"></i>
+                    </div>
+                    <h4>Smart Q&A</h4>
+                    <p>Ask questions about video content and get precise answers powered by AI.</p>
+                </div>
+            </div>
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
 </body>
 </html>
