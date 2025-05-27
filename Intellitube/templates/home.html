@@ -31,7 +31,58 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
         }
-        
+
+        /* NEW CSS for the replacement graphic */
+        .hero-graphic-container {
+            background: rgba(26, 26, 46, 0.8); /* Matches original hero-section background */
+            backdrop-filter: blur(10px); /* Matches original hero-section backdrop-filter */
+            border-radius: 20px; /* Matches original hero-section border-radius */
+            border: 1px solid rgba(255, 255, 255, 0.1); /* Matches original hero-section border */
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37); /* Matches original hero-section box-shadow */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            min-height: 300px; /* Ensure it has a minimum height, similar to max-height on original img */
+        }
+
+        .youtube-ai-graphic {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px; /* Space between YouTube icon and AI text */
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        }
+
+        .youtube-icon-wrapper {
+            background-color: #FF0000; /* YouTube red */
+            border-radius: 20%; /* Slightly rounded corners for the player */
+            width: 150px; /* Increased size */
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .youtube-icon-wrapper svg {
+            fill: white;
+            width: 60px; /* Size of the play icon */
+            height: 60px;
+        }
+
+        .ai-text {
+            font-size: 5rem; /* Large AI text */
+            font-weight: bold;
+            background: linear-gradient(90deg, var(--accent-color), var(--primary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1; /* Adjust line height to prevent extra space */
+        }
+        /* END NEW CSS */
+
         .btn-primary {
             background-color: var(--primary-color);
             border: none;
@@ -85,6 +136,28 @@
             background-clip: text;
             color: transparent;
         }
+
+        /* Responsive adjustments for the graphic */
+        @media (max-width: 768px) {
+            .youtube-ai-graphic {
+                flex-direction: column; /* Stack on small screens */
+                gap: 10px;
+            }
+            .youtube-icon-wrapper {
+                width: 120px;
+                height: 80px;
+            }
+            .youtube-icon-wrapper svg {
+                width: 50px;
+                height: 50px;
+            }
+            .ai-text {
+                font-size: 3rem;
+            }
+            .hero-graphic-container {
+                min-height: 250px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -121,10 +194,15 @@
                 </div>
             </div>
             <div class="col-lg-6">
-                <div class="hero-section p-4 p-lg-5 text-center">
-                    <img src="{{ url_for('static', filename='images/Intellitube-Logo.png') }}" alt="AI Video Analysis" class="img-fluid floating" style="max-height: 300px; animation-delay: 0.2s;">
+                <div class="hero-graphic-container animate__animated animate__fadeInRight animate__delay-0.5s">
+                    <div class="youtube-ai-graphic">
+                        <div class="youtube-icon-wrapper floating" style="animation-delay: 0.2s;">
+                            <svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false" class="style-scope yt-icon" style="pointer-events: none; display: block; width: 100%; height: 100%;"><g class="style-scope yt-icon"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" class="style-scope yt-icon"></path></g></svg>
+                        </div>
+                        <span class="ai-text floating" style="animation-delay: 0.4s;">AI</span>
+                    </div>
                 </div>
-            </div>
+                </div>
         </div>
 
         <div id="features" class="row py-5 mt-5">
