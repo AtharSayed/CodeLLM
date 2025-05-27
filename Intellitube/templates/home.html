@@ -32,32 +32,31 @@
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
         }
 
-        /* NEW CSS for the replacement graphic */
         .hero-graphic-container {
-            background: rgba(26, 26, 46, 0.8); /* Matches original hero-section background */
-            backdrop-filter: blur(10px); /* Matches original hero-section backdrop-filter */
-            border-radius: 20px; /* Matches original hero-section border-radius */
-            border: 1px solid rgba(255, 255, 255, 0.1); /* Matches original hero-section border */
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37); /* Matches original hero-section box-shadow */
+            background: rgba(26, 26, 46, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 2rem;
-            min-height: 300px; /* Ensure it has a minimum height, similar to max-height on original img */
+            min-height: 300px;
         }
 
         .youtube-ai-graphic {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 20px; /* Space between YouTube icon and AI text */
-            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            gap: 20px;
+            flex-wrap: wrap;
         }
 
         .youtube-icon-wrapper {
-            background-color: #FF0000; /* YouTube red */
-            border-radius: 20%; /* Slightly rounded corners for the player */
-            width: 150px; /* Increased size */
+            background-color: #FF0000;
+            border-radius: 20%;
+            width: 150px;
             height: 100px;
             display: flex;
             align-items: center;
@@ -68,20 +67,61 @@
 
         .youtube-icon-wrapper svg {
             fill: white;
-            width: 60px; /* Size of the play icon */
+            width: 60px;
             height: 60px;
         }
 
         .ai-text {
-            font-size: 5rem; /* Large AI text */
+            font-size: 5rem;
             font-weight: bold;
             background: linear-gradient(90deg, var(--accent-color), var(--primary-color));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            line-height: 1; /* Adjust line height to prevent extra space */
+            line-height: 1;
         }
-        /* END NEW CSS */
+
+        /* --- Custom Button Styles for Login/Sign Up (Option 2) --- */
+        /* Login Button - Minimalist (text-like with subtle hover) */
+        .btn-login-minimal {
+            background-color: transparent;
+            border: none;
+            color: var(--light-color);
+            padding: 8px 15px;
+            font-weight: 500;
+            letter-spacing: 0.2px;
+            transition: all 0.3s ease-in-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-login-minimal:hover {
+            background: linear-gradient(90deg, rgba(76, 201, 240, 0.1), rgba(67, 97, 238, 0.1));
+            color: var(--light-color);
+            transform: none;
+            border-radius: 5px;
+        }
+
+        /* Sign Up Button - Bold Gradient */
+        .btn-signup-gradient {
+            background: linear-gradient(90deg, var(--accent-color), var(--primary-color));
+            border: none;
+            color: var(--dark-color);
+            padding: 10px 25px;
+            font-weight: 700;
+            letter-spacing: 0.7px;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease-in-out;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .btn-signup-gradient:hover {
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            color: var(--light-color);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+        }
 
         .btn-primary {
             background-color: var(--primary-color);
@@ -140,7 +180,7 @@
         /* Responsive adjustments for the graphic */
         @media (max-width: 768px) {
             .youtube-ai-graphic {
-                flex-direction: column; /* Stack on small screens */
+                flex-direction: column;
                 gap: 10px;
             }
             .youtube-icon-wrapper {
@@ -174,10 +214,10 @@
                     <span class="fs-3 fw-bold gradient-text">IntelliTube</span>
                 </a>
                 <div class="d-flex">
-                    <a href="{{ url_for('login') }}" class="btn btn-outline-light me-2 animate__animated animate__fadeInRight animate__delay-1s">
+                    <a href="{{ url_for('login') }}" class="btn btn-login-minimal me-2 animate__animated animate__fadeInRight animate__delay-1s">
                         <i class="fas fa-sign-in-alt me-2"></i>Login
                     </a>
-                    <a href="{{ url_for('signup') }}" class="btn btn-primary animate__animated animate__fadeInRight animate__delay-1s">
+                    <a href="{{ url_for('signup') }}" class="btn btn-signup-gradient animate__animated animate__fadeInRight animate__delay-1s">
                         <i class="fas fa-user-plus me-2"></i>Sign Up
                     </a>
                 </div>
