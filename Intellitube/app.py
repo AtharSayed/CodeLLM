@@ -1,5 +1,6 @@
 import gradio as gr
 from fast_transcriber import transcribe_youtube
+from transcorrection import correct_transcript
 from summarizer import summarize
 from qa_chain import setup_qa
 from ytsenti import fetch_comments_scrape, analyze_sentiment, analyze_intent
@@ -41,10 +42,18 @@ def transcribe_and_summarize(url, progress=gr.Progress()):
 
     try:
         progress(0.3, desc="Transcribing YouTube video...")
-        transcript = transcribe_youtube(url)
+        raw_transcript = transcribe_youtube(url)
 
-        if transcript.startswith("❌ Error"):
-            return transcript, "", "", "❌ Transcript error", "", None
+        if raw_transcript.startswith("❌ Error"):
+            return raw_transcript, "", "", "❌ Transcript error", "", None
+
+        progress(0.5, desc="Correcting transcript...")
+        
+        # Without transcript correction layer
+        #transcript = raw_transcript
+
+        # With transcript correction layer 
+        transcript = correct_transcript(raw_transcript)
 
         progress(0.7, desc="Generating summary...")
         try:
