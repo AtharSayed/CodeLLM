@@ -11,6 +11,12 @@ import os
 import re
 from datetime import datetime
 
+# Import PDF related libraries
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.units import inch
+
 # Global variables
 stored_transcript = None
 qa_chain = None
@@ -49,9 +55,6 @@ def transcribe_and_summarize(url, progress=gr.Progress()):
 
         progress(0.5, desc="Correcting transcript...")
         
-        # Without transcript correction layer
-        #transcript = raw_transcript
-
         # With transcript correction layer 
         transcript = correct_transcript(raw_transcript)
 
@@ -148,7 +151,7 @@ def analyze_comments_sentiment(url, progress=gr.Progress()):
     return sentiment_text, None
 
 # ---------------------------
-# 💾 Save Output to File
+# 💾 Save Output to File (JSON)
 # ---------------------------
 def save_outputs(transcript, summary, sentiment):
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -169,6 +172,69 @@ def save_outputs(transcript, summary, sentiment):
     return f"✅ Saved to {file_path}"
 
 # ---------------------------
+# 📄 Generate PDF
+# ---------------------------
+def generate_pdf(transcript, summary, sentiment):
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    output_dir = "intellitube_outputs"
+    os.makedirs(output_dir, exist_ok=True)
+    pdf_path = os.path.join(output_dir, f"report_{timestamp}.pdf")
+
+    doc = SimpleDocTemplate(pdf_path, pagesize=letter)
+    styles = getSampleStyleSheet()
+    story = []
+
+    # Title
+    story.append(Paragraph("<b>IntelliTube Analysis Report</b>", styles['h1']))
+    story.append(Spacer(1, 0.2 * inch))
+
+    # Date
+    story.append(Paragraph(f"<b>Date:</b> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", styles['Normal']))
+    story.append(Spacer(1, 0.2 * inch))
+
+    # Transcript Section
+    story.append(Paragraph("<b>--- Transcript ---</b>", styles['h2']))
+    story.append(Spacer(1, 0.1 * inch))
+    story.append(Paragraph(transcript if transcript else "No transcript available.", styles['Normal']))
+    story.append(Spacer(1, 0.4 * inch))
+
+    # Summary Section
+    story.append(Paragraph("<b>--- Summary ---</b>", styles['h2']))
+    story.append(Spacer(1, 0.1 * inch))
+    story.append(Paragraph(summary if summary else "No summary available.", styles['Normal']))
+    story.append(Spacer(1, 0.4 * inch))
+
+    # Sentiment Analysis Section
+    story.append(Paragraph("<b>--- Comment Sentiment Analysis ---</b>", styles['h2']))
+    story.append(Spacer(1, 0.1 * inch))
+    # Split sentiment into lines and add as paragraphs
+    if sentiment:
+        for line in sentiment.split('\n'):
+            if line.strip():
+                story.append(Paragraph(line, styles['Normal']))
+    else:
+        story.append(Paragraph("No sentiment analysis available.", styles['Normal']))
+    story.append(Spacer(1, 0.4 * inch))
+
+    # Question History Section
+    story.append(Paragraph("<b>--- Q&A History ---</b>", styles['h2']))
+    story.append(Spacer(1, 0.1 * inch))
+    if question_history:
+        for i, item in enumerate(question_history, 1):
+            story.append(Paragraph(f"<b>Q{i}:</b> {item['question']}", styles['Normal']))
+            story.append(Paragraph(f"<b>A{i}:</b> {item['answer']}", styles['Normal']))
+            story.append(Spacer(1, 0.1 * inch))
+    else:
+        story.append(Paragraph("No questions asked yet.", styles['Normal']))
+    story.append(Spacer(1, 0.4 * inch))
+
+    try:
+        doc.build(story)
+        return pdf_path, f"✅ PDF report generated: {pdf_path}"
+    except Exception as e:
+        return None, f"❌ Error generating PDF: {str(e)}"
+
+# ---------------------------
 # 🧹 Clear Everything
 # ---------------------------
 def clear_all():
@@ -176,7 +242,7 @@ def clear_all():
     stored_transcript = None
     qa_chain = None
     question_history = []
-    return "", "", "", "", "", "No questions asked yet.", None
+    return "", "", "", "", "", "No questions asked yet.", None, None # Added None for pdf_output_file
 
 # ---------------------------
 # 🚀 Gradio UI
@@ -245,11 +311,11 @@ with gr.Blocks(theme=gr.themes.Soft(), css="""
     with gr.Tabs():
         with gr.TabItem("📝 Transcript"):
             transcript_output = gr.Textbox(label="Transcript", lines=10, interactive=False, elem_classes="output-text")
-            save_transcript_btn = gr.Button("💾 Save Outputs")
+            # Changed save_transcript_btn to a single save outputs button
         
         with gr.TabItem("📌 Summary"):
             summary_output = gr.Textbox(label="Summary", lines=10, interactive=False, elem_classes="output-text")
-            save_summary_btn = gr.Button("💾 Save Outputs")
+            # Changed save_summary_btn to a single save outputs button
         
         with gr.TabItem("❓ Q&A"):
             question = gr.Textbox(label="Ask a Question", placeholder="e.g., What is the video about?")
@@ -262,7 +328,14 @@ with gr.Blocks(theme=gr.themes.Soft(), css="""
         with gr.TabItem("💬 Sentiment"):
             sentiment_output = gr.Textbox(label="Comment Sentiment", lines=10, interactive=False, elem_classes="output-text")
             sentiment_btn = gr.Button("🧠 Analyze Comments")
-            save_sentiment_btn = gr.Button("💾 Save Outputs")
+            # Changed save_sentiment_btn to a single save outputs button
+
+    # New section for download buttons
+    with gr.Row():
+        save_json_btn = gr.Button("💾 Download All as JSON", variant="secondary")
+        download_pdf_btn = gr.Button("📄 Download Report as PDF", variant="secondary")
+
+    pdf_output_file = gr.File(label="Download PDF", type="filepath")
 
     # Event bindings
     process_btn.click(
@@ -292,25 +365,21 @@ with gr.Blocks(theme=gr.themes.Soft(), css="""
     clear_btn.click(
         clear_all,
         inputs=None,
-        outputs=[url, transcript_output, summary_output, answer_output, sentiment_output, question_history_output, status]
+        outputs=[url, transcript_output, summary_output, answer_output, sentiment_output, question_history_output, status, pdf_output_file]
     )
 
-    save_transcript_btn.click(
+    # Replaced individual save buttons with a single JSON save button
+    save_json_btn.click(
         save_outputs,
         inputs=[transcript_output, summary_output, sentiment_output],
         outputs=status
     )
 
-    save_summary_btn.click(
-        save_outputs,
+    # New PDF download button
+    download_pdf_btn.click(
+        generate_pdf,
         inputs=[transcript_output, summary_output, sentiment_output],
-        outputs=status
-    )
-
-    save_sentiment_btn.click(
-        save_outputs,
-        inputs=[transcript_output, summary_output, sentiment_output],
-        outputs=status
+        outputs=[pdf_output_file, status]
     )
 
 if __name__ == "__main__":
