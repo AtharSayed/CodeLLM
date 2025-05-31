@@ -37,7 +37,7 @@ Give it any YouTube URL, and it will:
 
 ## 🌐 Web Interface (Frontend)
 
-Beyond the powerful backend, IntelliTube now boasts a custom-built, responsive, and visually appealing frontend for a seamless user experience.
+Beyond the powerful backend, IntelliTube now boasts a custom-built, responsive, and visually appealing frontend for a seamless user experience it is built using Flask, a lightweight and powerful web framework for Python. Key features include:
 
 -   **Modern Design:** Built with **HTML, CSS, and Bootstrap 5**, offering a clean and intuitive layout.
 -   **Dynamic Interactions:** Enhanced with **JavaScript** for interactive elements, including password strength validation and form handling.
