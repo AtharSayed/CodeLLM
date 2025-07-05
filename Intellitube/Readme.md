@@ -19,7 +19,7 @@ Give it any YouTube URL, and it will:
 6.  Provides a secure and intuitive **login and sign-up experience** for user management.
 7.  Displays all analysis results within a beautiful, clean, and concise **custom web interface**.
 8.  Provide a proper report with timestamp for download and document purpose of the entire process
-9.  Transcript correction layer to correct the incorrect words from the transcription 
+9.  Transcript correction using local Mistral via Ollama to fix transcription errors.
 
 ---
 
