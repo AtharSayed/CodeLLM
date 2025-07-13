@@ -10,6 +10,8 @@ import json
 import os
 import re
 from datetime import datetime
+import webbrowser
+import urllib.parse
 
 # Import PDF related libraries
 from reportlab.lib.pagesizes import letter
@@ -32,6 +34,12 @@ def is_valid_youtube_url(url):
         r"(https?://)?(www\.)?(youtube\.com|youtu\.?be)/.+"
     )
     return youtube_regex.match(url) is not None
+
+def extract_video_id(url):
+    match = re.search(r"(?:v=|youtu\.be/)([a-zA-Z0-9_-]{11})", url)
+    if not match:
+        raise ValueError("Invalid YouTube URL")
+    return match.group(1)
 
 # ---------------------------
 # 🔁 Transcription & Summarization
@@ -151,6 +159,21 @@ def analyze_comments_sentiment(url, progress=gr.Progress()):
     return sentiment_text, None
 
 # ---------------------------
+# 🚀 Streamlit Dashboard Integration
+# ---------------------------
+def launch_streamlit_dashboard(url):
+    if not url.strip():
+        return "❌ No URL available to launch dashboard"
+    
+    try:
+        video_id = extract_video_id(url)
+        streamlit_url = f"http://localhost:8501/?video_id={video_id}"
+        webbrowser.open(streamlit_url)
+        return f"✅ Opening dashboard for video: {video_id}"
+    except Exception as e:
+        return f"❌ Error launching dashboard: {str(e)}"
+
+# ---------------------------
 # 💾 Save Output to File (JSON)
 # ---------------------------
 def save_outputs(transcript, summary, sentiment):
@@ -207,7 +230,6 @@ def generate_pdf(transcript, summary, sentiment):
     # Sentiment Analysis Section
     story.append(Paragraph("<b>--- Comment Sentiment Analysis ---</b>", styles['h2']))
     story.append(Spacer(1, 0.1 * inch))
-    # Split sentiment into lines and add as paragraphs
     if sentiment:
         for line in sentiment.split('\n'):
             if line.strip():
@@ -242,7 +264,7 @@ def clear_all():
     stored_transcript = None
     qa_chain = None
     question_history = []
-    return "", "", "", "", "", "No questions asked yet.", None, None # Added None for pdf_output_file
+    return "", "", "", "", "", "No questions asked yet.", None, None
 
 # ---------------------------
 # 🚀 Gradio UI
@@ -311,11 +333,9 @@ with gr.Blocks(theme=gr.themes.Soft(), css="""
     with gr.Tabs():
         with gr.TabItem("📝 Transcript"):
             transcript_output = gr.Textbox(label="Transcript", lines=10, interactive=False, elem_classes="output-text")
-            # Changed save_transcript_btn to a single save outputs button
         
         with gr.TabItem("📌 Summary"):
             summary_output = gr.Textbox(label="Summary", lines=10, interactive=False, elem_classes="output-text")
-            # Changed save_summary_btn to a single save outputs button
         
         with gr.TabItem("❓ Q&A"):
             question = gr.Textbox(label="Ask a Question", placeholder="e.g., What is the video about?")
@@ -327,10 +347,10 @@ with gr.Blocks(theme=gr.themes.Soft(), css="""
         
         with gr.TabItem("💬 Sentiment"):
             sentiment_output = gr.Textbox(label="Comment Sentiment", lines=10, interactive=False, elem_classes="output-text")
-            sentiment_btn = gr.Button("🧠 Analyze Comments")
-            # Changed save_sentiment_btn to a single save outputs button
+            with gr.Row():
+                sentiment_btn = gr.Button("🧠 Analyze Comments")
+                streamlit_btn = gr.Button("📊 Open Detailed Dashboard", variant="primary")
 
-    # New section for download buttons
     with gr.Row():
         save_json_btn = gr.Button("💾 Download All as JSON", variant="secondary")
         download_pdf_btn = gr.Button("📄 Download Report as PDF", variant="secondary")
@@ -362,20 +382,24 @@ with gr.Blocks(theme=gr.themes.Soft(), css="""
         outputs=[sentiment_output, status]
     )
 
+    streamlit_btn.click(
+        launch_streamlit_dashboard,
+        inputs=url,
+        outputs=status
+    )
+
     clear_btn.click(
         clear_all,
         inputs=None,
         outputs=[url, transcript_output, summary_output, answer_output, sentiment_output, question_history_output, status, pdf_output_file]
     )
 
-    # Replaced individual save buttons with a single JSON save button
     save_json_btn.click(
         save_outputs,
         inputs=[transcript_output, summary_output, sentiment_output],
         outputs=status
     )
 
-    # New PDF download button
     download_pdf_btn.click(
         generate_pdf,
         inputs=[transcript_output, summary_output, sentiment_output],
