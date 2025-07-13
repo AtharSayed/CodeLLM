@@ -1,0 +1,34 @@
+/* Custom Streamlit styling */
+.st-emotion-cache-1v0mbdj {
+    border-radius: 10px;
+}
+
+.st-emotion-cache-1q7spjk {
+    font-weight: 600;
+}
+
+.stButton>button {
+    border-radius: 8px;
+    padding: 8px 16px;
+}
+
+.stTextInput>div>div>input {
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.stMetric {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+}
+
+.stMetric [data-testid="stMetricLabel"] {
+    font-size: 1.1rem;
+}
+
+.stMetric [data-testid="stMetricValue"] {
+    font-size: 1.8rem;
+    font-weight: bold;
+}
