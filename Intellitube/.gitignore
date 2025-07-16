@@ -1,0 +1,10 @@
+# Ignore compiled Python files
+__pycache__/transcorrection.cpython-311.pyc
+__pycache__/ytcom.cpython-311.pyc
+__pycache__/ytsenti.cpython-311.pyc
+
+# Ignore entire output directory
+intellitube_outputs/
+
+# Ignore specific image file
+static/images/Intellitube-Logo.png
