@@ -116,5 +116,7 @@ def main():
 
     display_results(sentiment_summary, intent_summary, sentiment_detailed, intent_detailed)
 
+
+# --> Uncomment only for testing sentiment Analysis Functionality 
 # if __name__ == "__main__":
 #     main()
