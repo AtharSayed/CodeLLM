@@ -1,56 +1,13 @@
 import re
-from youtube_comment_downloader import YoutubeCommentDownloader
-from langdetect import detect
-from deep_translator import GoogleTranslator
 from transformers import pipeline
 import torch
+from ytcom import fetch_comments_scrape
 
 # Sentiment pipeline setup
 device = 0 if torch.cuda.is_available() else -1
 print("Device set to:", "cuda:0" if device == 0 else "cpu")
 sentiment_analyzer = pipeline("sentiment-analysis", device=device)
 
-# Extracts YouTube video ID
-def extract_video_id(url):
-    match = re.search(r"(?:v=|youtu\.be/)([a-zA-Z0-9_-]{11})", url)
-    if not match:
-        raise ValueError("Invalid YouTube URL")
-    return match.group(1)
-
-# Language detection
-def is_english(text):
-    try:
-        return detect(text) == "en"
-    except:
-        return False
-
-# Translate if not English
-def translate_to_english(text):
-    try:
-        return GoogleTranslator(source='auto', target='en').translate(text)
-    except Exception as e:
-        return f"[Translation error] {text}"
-
-# Fetch YouTube comments
-def fetch_comments_scrape(url, max_comments=50):
-    video_id = extract_video_id(url)
-    downloader = YoutubeCommentDownloader()
-    comments = []
-    print("💬 Fetching comments...")
-
-    try:
-        for comment in downloader.get_comments_from_url(f"https://www.youtube.com/watch?v={video_id}"):
-            text = comment["text"]
-            if not is_english(text):
-                text = translate_to_english(text)
-            comments.append(text)
-            if len(comments) >= max_comments:
-                break
-    except Exception as e:
-        print(f"❌ Error fetching comments: {e}")
-        return []
-
-    return comments
 
 # Perform sentiment analysis
 def analyze_sentiment(comments):
