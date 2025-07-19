@@ -1,9 +1,5 @@
 # Ignore compiled Python files
-__pycache__/transcorrection.cpython-311.pyc
-__pycache__/ytcom.cpython-311.pyc
-__pycache__/ytsenti.cpython-311.pyc
-__pycache__/qa_chain.cpython-311.pyc
-__pycache__/fast_transcriber.cpython-311.pyc
+__pycache__/
 
 # Ignore entire output directory
 intellitube_outputs/
