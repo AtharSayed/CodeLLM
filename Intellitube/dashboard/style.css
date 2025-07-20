@@ -1,34 +1,270 @@
-/* Custom Streamlit styling */
-.st-emotion-cache-1v0mbdj {
-    border-radius: 10px;
+/* style.css - V4: Dark Theme for Enhanced UI and Readability */
+
+/* Global Body and App Styling - Dark Theme */
+body {
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: #e0e0e0; /* Light gray text for readability on dark background */
+    background-color: #1a1a2e; /* Deep blue/purple background */
 }
 
-.st-emotion-cache-1q7spjk {
+.stApp {
+    background-color: #1a1a2e; /* Consistent dark background */
+    color: #e0e0e0; /* Ensure app-wide text is light */
+}
+
+/* Main Content Container Padding */
+.st-emotion-cache-1c7y2kl { /* Target main content container (adjust if this class name changes in future Streamlit versions) */
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    max-width: 1200px; /* Max width for better readability on large screens */
+    margin: auto; /* Center the content */
+}
+
+/* Headings - Adjusted for Dark Theme */
+h1 {
+    color: #8be9fd; /* Bright light blue for main title (cyan-ish) */
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    text-align: center; /* Center the main title */
+    font-size: 2.8em; /* Larger main title */
+    letter-spacing: -0.5px;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5); /* Subtle shadow for depth */
+}
+
+h2, h3, h4 {
+    color: #a9e6ff; /* Slightly lighter blue for subheadings */
+    border-bottom: 1px solid #33334d; /* Darker, subtle border */
+    padding-bottom: 0.75rem;
+    margin-top: 2.5rem; /* More vertical space */
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    font-size: 1.8em; /* Larger subheadings */
+}
+
+/* Streamlit Alerts (st.info, st.warning, st.error, st.success) - Dark Theme */
+/* CRITICAL FIXES FOR VISIBILITY ON DARK BACKGROUND */
+
+/* Base alert styling */
+.stAlert {
+    border-radius: 8px;
+    padding: 15px 20px;
+    font-size: 1.05em;
+    margin-bottom: 1.2rem; /* Consistent spacing */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4); /* Stronger shadow for alerts */
+    line-height: 1.5; /* Improve text spacing */
+}
+
+/* Specific Alert Colors for better visibility on dark theme */
+/* st.info - blue/cyan alert */
+[data-testid="stAlert"] [role="alert"] { /* This targets the actual alert container */
+    background-color: #2e4a6e; /* Darker blue background for info */
+    color: #d0e0ff; /* Lighter blue text */
+    border-left: 5px solid #00b0ff; /* Bright blue border */
+}
+/* st.warning - orange/yellow alert */
+[data-testid="stAlert"].st-emotion-cache-s8s00j { /* Specific class for warning */
+    background-color: #5a4b2a; /* Darker orange/brown background */
+    color: #ffe082; /* Lighter yellow text */
+    border-left: 5px solid #ffca28; /* Bright yellow border */
+}
+
+/* st.error - red alert */
+[data-testid="stAlert"].st-emotion-cache-14u4d01 { /* Specific class for error */
+    background-color: #6d3a3a; /* Darker red background */
+    color: #ffcdd2; /* Lighter red text */
+    border-left: 5px solid #ef5350; /* Bright red border */
+}
+
+/* st.success - green alert */
+[data-testid="stAlert"].st-emotion-cache-1f0f9b6 { /* Specific class for success */
+    background-color: #3b6040; /* Darker green background */
+    color: #c8e6c9; /* Lighter green text */
+    border-left: 5px solid #66bb6a; /* Bright green border */
+}
+
+
+/* Metric Boxes - Dark Theme */
+.stMetric {
+    background-color: #2a2a47; /* Slightly lighter dark background for cards */
+    border: 1px solid #3d3d5c; /* Subtle border */
+    border-radius: 10px;
+    padding: 25px; /* More padding */
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3); /* Stronger shadow for depth */
+    text-align: center;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.stMetric:hover {
+    transform: translateY(-7px); /* Lift on hover */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+.stMetric label div {
+    font-size: 1.2em; /* Slightly larger label */
+    font-weight: 600; /* Bolder label */
+    color: #b0b0b0; /* Lighter gray for labels */
+    margin-bottom: 0.7rem; /* More space */
+}
+
+.stMetric big {
+    font-size: 3em; /* Significantly larger metric value */
+    font-weight: 800; /* Extra bold */
+    color: #8be9fd; /* Bright light blue for metric values */
+}
+.stMetric [data-testid="stMetricDelta"] {
+    color: #69f0ae; /* Light green for positive delta */
+    font-size: 1.2em;
     font-weight: 600;
 }
+.stMetric [data-testid="stMetricDelta"].negative {
+    color: #ff8a80; /* Light red for negative delta */
+}
 
+
+/* Buttons - Dark Theme */
 .stButton>button {
+    background-color: #6272a4; /* Dracula theme purple/blue */
+    color: white;
     border-radius: 8px;
-    padding: 8px 16px;
+    border: none;
+    padding: 14px 30px; /* More padding */
+    font-size: 1.15em; /* Slightly larger font */
+    font-weight: 600; /* Bolder font */
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+.stButton>button:hover {
+    background-color: #444a72; /* Darker on hover */
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.4);
+    transform: translateY(-2px); /* Slight lift on hover */
+}
+
+/* Text Input - Dark Theme */
+.stTextInput>label { /* Style the label for input */
+    font-weight: 600;
+    color: #c0c0c0; /* Light gray label */
 }
 
 .stTextInput>div>div>input {
     border-radius: 8px;
-    padding: 10px;
+    border: 1px solid #3d3d5c; /* Darker border */
+    padding: 12px 18px; /* More padding */
+    font-size: 1.1em;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+    background-color: #2a2a47; /* Dark background for input field */
+    color: #f8f8f2; /* Bright text in input field */
 }
 
-.stMetric {
-    background-color: #f8f9fa;
+.stTextInput>div>div>input:focus {
+    border-color: #8be9fd; /* Bright blue highlight on focus */
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(139, 233, 253, 0.3); /* Stronger focus halo */
+}
+
+/* Tabs - Dark Theme */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 25px; /* More space between tabs */
+    margin-bottom: 2rem;
+}
+
+.stTabs [data-baseweb="tab"] {
+    height: 60px; /* Taller tabs */
+    white-space: nowrap;
+    border-radius: 10px; /* More rounded */
+    background-color: #2a2a47; /* Darker background for inactive tabs */
+    gap: 12px;
+    padding-left: 30px;
+    padding-right: 30px;
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); /* Subtle shadow for inactive tabs */
+}
+
+.stTabs [data-baseweb="tab"] > div[data-testid="stMarkdownContainer"] {
+    font-size: 1.2em; /* Larger font */
+    font-weight: 600; /* Bolder font */
+    color: #b0b0b0; /* Light gray text for inactive tabs */
+}
+
+.stTabs [data-baseweb="tab-list"] button[aria-selected="true"] {
+    background-color: #6272a4; /* Active tab color */
+    color: white !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); /* Prominent shadow for active tab */
+    transform: translateY(-3px); /* Slight lift */
+}
+
+.stTabs [data-baseweb="tab-list"] button[aria-selected="true"] > div[data-testid="stMarkdownContainer"] {
+    color: white !important; /* Ensure text is white */
+}
+
+/* Plotly Charts & General Containers - Dark Theme */
+.stPlotlyChart, .stContainer {
+    background-color: #2a2a47; /* Dark background for containers */
+    border: 1px solid #3d3d5c; /* Subtle border */
     border-radius: 10px;
-    padding: 15px;
+    padding: 20px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+    margin-bottom: 2rem; /* Consistent spacing */
+}
+
+/* Specific styling for word cloud output to ensure background is white */
+/* Word Cloud library generates a white background image, so keep container white for contrast */
+.wordcloud-container {
+    background-color: #ffffff; /* Explicitly white for word cloud image */
+    border: 1px solid #d0d7de; /* Lighter border for contrast */
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* Softer shadow */
+    margin-bottom: 2rem;
+}
+
+/* Dataframe styling - Dark Theme */
+.stDataFrame {
+    border-radius: 10px;
+    overflow: hidden; /* Ensures borders are respected */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.stDataFrame table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.stDataFrame thead tr {
+    background-color: #3a3a5a; /* Header background */
+    color: #f8f8f2; /* Light text for header */
+    font-weight: 700;
+}
+
+.stDataFrame tbody tr:nth-child(even) {
+    background-color: #2e2e4a; /* Zebra striping */
+}
+.stDataFrame tbody tr:nth-child(odd) {
+    background-color: #2a2a47; /* Odd row background */
+}
+
+.stDataFrame th, .stDataFrame td {
+    padding: 15px 18px; /* More padding */
+    border-bottom: 1px solid #3d3d5c; /* Darker border */
+}
+
+.stDataFrame td {
+    color: #e0e0e0; /* Light text in cells */
+}
+
+/* Divider styling - Dark Theme */
+hr {
+    border-top: 1px solid #3d3d5c; /* Visible but subtle dark divider */
+    margin-top: 2.5rem;
+    margin-bottom: 2.5rem;
+    opacity: 0.7; /* Make it slightly transparent */
+}
+
+/* Info message at the bottom - Dark Theme */
+/* Using a general stAlert selector for the bottom info if it's not caught by specific ones */
+[data-testid="stAlert"] {
+    margin-top: 2rem;
     text-align: center;
-}
-
-.stMetric [data-testid="stMetricLabel"] {
-    font-size: 1.1rem;
-}
-
-.stMetric [data-testid="stMetricValue"] {
-    font-size: 1.8rem;
-    font-weight: bold;
+    font-style: italic;
 }
