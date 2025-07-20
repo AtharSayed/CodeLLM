@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import sys
 from pathlib import Path
 import re
+from collections import Counter
 
 # Set page config FIRST AND ONLY ONCE (at the very beginning)
 st.set_page_config(
@@ -63,54 +64,6 @@ def cached_analyze_data(comments):
     intent_summary, intent_detailed = analyze_intent(comments)
     return sentiment_summary, sentiment_detailed, intent_summary, intent_detailed
 
-
-# Main analysis function
-def analyze_video(video_id): # Function now takes video_id directly
-    # Use a standard YouTube watch URL for fetching comments
-    fetch_url = f"https://www.youtube.com/watch?v={video_id}"
-    try:
-        comments = cached_fetch_comments(fetch_url, max_comments=100) # Using cached function
-        
-        if not comments:
-            st.error("No comments found or couldn't fetch comments. Please check the video ID or try again.")
-            return False
-            
-        sentiment_summary, sentiment_detailed, intent_summary, intent_detailed = cached_analyze_data(comments) # Using cached function
-            
-        # Store in session state
-        st.session_state.comments_data = comments
-        st.session_state.sentiment_data = {
-            'summary': sentiment_summary,
-            'detailed': sentiment_detailed
-        }
-        st.session_state.intent_data = {
-            'summary': intent_summary,
-            'detailed': intent_detailed
-        }
-
-        # Create a combined DataFrame for easier filtering and display
-        df = pd.DataFrame(sentiment_detailed, columns=['Comment', 'Sentiment', 'Score'])
-        df['Score'] = df['Score'].round(3)
-        
-        # Merge intent data if available and aligned (assuming same order for simplicity)
-        if len(intent_detailed) == len(df):
-            df['Intent'] = [item[1] for item in intent_detailed] # Assuming intent_detailed is list of (comment, intent_label, score)
-        else:
-            st.warning("Could not perfectly merge intent data due to length mismatch.")
-            df['Intent'] = 'N/A' # Fallback
-        
-        st.session_state.processed_df = df
-        st.session_state.current_video_id = video_id # Store the ID that was successfully analyzed
-        
-        return True
-        
-    except ValueError as ve:
-        st.error(f"Invalid Video ID: {str(ve)}. Please ensure the video ID is correct.")
-        return False
-    except Exception as e:
-        st.error(f"An unexpected error occurred during analysis: {str(e)}")
-        st.info("Please ensure the video exists, is publicly accessible, and has comments enabled.")
-        return False
 
 # Visualization functions
 def plot_sentiment_distribution():
@@ -200,11 +153,11 @@ def generate_word_cloud(sentiment_type):
             st.warning(f"No {sentiment_type.lower()} comments to display for Word Cloud.")
             return
             
-        text = ' '.join(filtered_comments_df['Comment'])
+        text = ' '.join(filtered_comments_df['Comment'].astype(str)) # Ensure comments are strings
         
         # Add custom stop words (common YouTube phrases, etc.)
         custom_stopwords = set(STOPWORDS)
-        custom_stopwords.update(["video", "youtube", "comment", "like", "channel", "thanks", "great", "good", "https", "www", "com", "get", "dont", "just", "really", "much", "one", "can", "see", "also"]) # Added more common web words and short words
+        custom_stopwords.update(["video", "youtube", "comment", "like", "channel", "thanks", "great", "good", "https", "www", "com", "get", "dont", "just", "really", "much", "one", "can", "see", "also", "new", "time", "s", "t", "m"]) # Added more common web words and short words
         
         wordcloud = WordCloud(width=800, height=400, 
                              background_color='white', # Wordcloud image background must be distinct
@@ -218,6 +171,121 @@ def generate_word_cloud(sentiment_type):
         ax.axis('off')
         ax.set_title(f'{sentiment_type} Comments Word Cloud', color='black') # Title color for word cloud
         st.pyplot(fig)
+
+def plot_top_words(sentiment_type, n=15):
+    if st.session_state.processed_df is not None:
+        detailed_df = st.session_state.processed_df
+        filtered_comments_df = detailed_df[detailed_df['Sentiment'] == sentiment_type]
+
+        if filtered_comments_df.empty:
+            st.info(f"No {sentiment_type.lower()} comments to analyze for top words.")
+            return
+
+        text = ' '.join(filtered_comments_df['Comment'].astype(str))
+        words = re.findall(r'\b\w+\b', text.lower()) # Extract words
+        
+        # Define stopwords
+        custom_stopwords = set(STOPWORDS)
+        custom_stopwords.update(["video", "youtube", "comment", "like", "channel", "thanks", "great", "good", "https", "www", "com", "get", "dont", "just", "really", "much", "one", "can", "see", "also", "new", "time", "s", "t", "m"])
+
+        # Filter out stopwords and non-alphabetic words
+        filtered_words = [word for word in words if word not in custom_stopwords and word.isalpha()]
+
+        if not filtered_words:
+            st.info(f"Not enough relevant words found in {sentiment_type.lower()} comments for top words plot.")
+            return
+
+        word_counts = Counter(filtered_words).most_common(n)
+        words_df = pd.DataFrame(word_counts, columns=['Word', 'Count'])
+
+        fig = px.bar(words_df.sort_values('Count', ascending=True), y='Word', x='Count',
+                     title=f'<b>Top {n} Most Frequent Words in {sentiment_type} Comments</b>',
+                     orientation='h',
+                     color_discrete_sequence=['#8be9fd']) # A futuristic blue/cyan
+        fig.update_layout(
+            yaxis_title="Word", 
+            xaxis_title="Frequency", 
+            title_x=0.5,
+            plot_bgcolor='#2a2a47',
+            paper_bgcolor='#2a2a47',
+            font_color='#e0e0e0',
+            xaxis=dict(gridcolor='#3d3d5c', tickfont=dict(color='#e0e0e0'), title_font=dict(color='#e0e0e0')),
+            yaxis=dict(gridcolor='#3d3d5c', tickfont=dict(color='#e0e0e0'), title_font=dict(color='#e0e0e0')),
+            margin=dict(l=100) # Adjust left margin for long words
+        )
+        st.plotly_chart(fig, use_container_width=True)
+
+def plot_comment_length_distribution():
+    if st.session_state.processed_df is not None:
+        df = st.session_state.processed_df
+        df['Comment_Length'] = df['Comment'].apply(lambda x: len(str(x).split())) # Length in words
+
+        fig = px.histogram(df, x='Comment_Length', 
+                           title='<b>Distribution of Comment Lengths (Words)</b>',
+                           nbins=50,
+                           color_discrete_sequence=['#6272a4']) # Use a theme color
+        fig.update_layout(
+            xaxis_title="Number of Words", 
+            yaxis_title="Number of Comments", 
+            bargap=0.1, 
+            title_x=0.5,
+            plot_bgcolor='#2a2a47',
+            paper_bgcolor='#2a2a47',
+            font_color='#e0e0e0',
+            xaxis=dict(gridcolor='#3d3d5c', tickfont=dict(color='#e0e0e0'), title_font=dict(color='#e0e0e0')),
+            yaxis=dict(gridcolor='#3d3d5c', tickfont=dict(color='#e0e0e0'), title_font=dict(color='#e0e0e0'))
+        )
+        st.plotly_chart(fig, use_container_width=True)
+
+
+# Main analysis function
+def analyze_video(video_id): # Function now takes video_id directly
+    # Use a standard YouTube watch URL for fetching comments
+    fetch_url = f"https://www.youtube.com/watch?v={video_id}"
+    try:
+        comments = cached_fetch_comments(fetch_url, max_comments=100) # Using cached function
+        
+        if not comments:
+            st.error("No comments found or couldn't fetch comments. Please check the video ID or try again.")
+            return False
+            
+        sentiment_summary, sentiment_detailed, intent_summary, intent_detailed = cached_analyze_data(comments) # Using cached function
+            
+        # Store in session state
+        st.session_state.comments_data = comments
+        st.session_state.sentiment_data = {
+            'summary': sentiment_summary,
+            'detailed': sentiment_detailed
+        }
+        st.session_state.intent_data = {
+            'summary': intent_summary,
+            'detailed': intent_detailed
+        }
+
+        # Create a combined DataFrame for easier filtering and display
+        df = pd.DataFrame(sentiment_detailed, columns=['Comment', 'Sentiment', 'Score'])
+        df['Score'] = df['Score'].round(3)
+        
+        # Merge intent data if available and aligned (assuming same order for simplicity)
+        if len(intent_detailed) == len(df):
+            df['Intent'] = [item[1] for item in intent_detailed] # Assuming intent_detailed is list of (comment, intent_label, score)
+        else:
+            # Fallback if lengths don't match, though they should ideally for direct merge
+            df['Intent'] = 'N/A' 
+            st.warning("Could not perfectly merge intent data due to length mismatch. Intent column might be incomplete.")
+        
+        st.session_state.processed_df = df
+        st.session_state.current_video_id = video_id # Store the ID that was successfully analyzed
+        
+        return True
+        
+    except ValueError as ve:
+        st.error(f"Invalid Video ID: {str(ve)}. Please ensure the video ID is correct.")
+        return False
+    except Exception as e:
+        st.error(f"An unexpected error occurred during analysis: {str(e)}")
+        st.info("Please ensure the video exists, is publicly accessible, and has comments enabled.")
+        return False
 
 def show_comment_samples():
     if st.session_state.processed_df is not None:
@@ -313,11 +381,11 @@ def main():
             with st.status("Analyzing comments...", expanded=True) as status:
                 st.write(f"Fetching and processing data for video ID: **{video_id}**")
                 if analyze_video(video_id): # Pass video_id directly to analyze_video
-                    status.update(label="Analysis complete!", state="complete", expanded=False)
+                    status.update(label="Analysis complete! ✨", state="complete", expanded=False)
                     st.markdown("---") # Visual separator after analysis complete
                     display_results()
                 else:
-                    status.update(label="Analysis failed!", state="error", expanded=True)
+                    status.update(label="Analysis failed! 🚨", state="error", expanded=True)
                     st.error("Failed to perform analysis. Please ensure the video ID is valid and has comments enabled.") # More specific error
     else:
         st.warning("No video ID provided in the URL. Please launch this dashboard from the Gradio app.")
@@ -348,43 +416,58 @@ def display_results():
 
     st.markdown("---") # Horizontal line for separation
 
-    # Charts section
+    # Charts section - Using Tabs for structure
     st.subheader("Visualizations")
-    chart_tab1, chart_tab2, chart_tab3 = st.tabs(["Sentiment Distribution", "Intent Distribution", "Score Distribution"])
+    chart_tab1, chart_tab2, chart_tab3, chart_tab4 = st.tabs(["Sentiment & Intent", "Sentiment Scores", "Text Insights", "Comment Samples"])
     
     with chart_tab1:
-        plot_sentiment_distribution()
+        st.markdown("### Sentiment and Intent Distributions")
+        col_sent, col_intent = st.columns(2)
+        with col_sent:
+            plot_sentiment_distribution()
+        with col_intent:
+            plot_intent_distribution()
     
     with chart_tab2:
-        plot_intent_distribution()
+        st.markdown("### Detailed Sentiment Score Analysis")
+        plot_sentiment_score_distribution()
 
     with chart_tab3:
-        plot_sentiment_score_distribution()
-    
-    st.markdown("---") # Horizontal line for separation
+        st.markdown("### Textual Insights from Comments")
+        st.markdown("#### Word Clouds")
+        wordcloud_col1, wordcloud_col2 = st.columns(2)
+        with wordcloud_col1:
+            with st.container(border=True):
+                generate_word_cloud('POSITIVE')
+        with wordcloud_col2:
+            with st.container(border=True):
+                generate_word_cloud('NEGATIVE')
+        
+        st.markdown("---") # Separator for word clouds and top words
+        st.markdown("#### Most Frequent Words")
+        top_words_col1, top_words_col2 = st.columns(2)
+        with top_words_col1:
+            with st.container(border=True):
+                plot_top_words('POSITIVE')
+        with top_words_col2:
+            with st.container(border=True):
+                plot_top_words('NEGATIVE')
 
-    # Word clouds
-    st.subheader("Insightful Word Clouds")
-    wordcloud_col1, wordcloud_col2 = st.columns(2)
-    
-    with wordcloud_col1:
-        with st.container(border=True): # Use container for word clouds
-            generate_word_cloud('POSITIVE')
-    
-    with wordcloud_col2:
-        with st.container(border=True): # Use container for word clouds
-            generate_word_cloud('NEGATIVE')
-    
-    st.markdown("---") # Horizontal line for separation
+        st.markdown("---") # Separator for top words and comment length
+        st.markdown("#### Comment Length Analysis")
+        with st.container(border=True):
+            plot_comment_length_distribution()
 
-    # Top comments section
-    if st.session_state.processed_df is not None:
-        show_top_comments(st.session_state.processed_df)
 
-    st.markdown("---") # Horizontal line for separation
+    with chart_tab4:
+        # Top comments section
+        if st.session_state.processed_df is not None:
+            show_top_comments(st.session_state.processed_df)
 
-    # Comment samples (now includes filtering)
-    show_comment_samples()
+        st.markdown("---") # Horizontal line for separation
+
+        # Comment samples (now includes filtering)
+        show_comment_samples()
     
     st.markdown("---") # Horizontal line for separation
     st.info("Analysis powered by advanced NLP models.")
