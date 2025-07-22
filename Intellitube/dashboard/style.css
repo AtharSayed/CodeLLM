@@ -1,4 +1,4 @@
-/* style.css - V4: Dark Theme for Enhanced UI and Readability */
+/* style.css - V5: Dark Theme for Enhanced UI and Readability with More Polish */
 
 /* Global Body and App Styling - Dark Theme */
 body {
@@ -62,26 +62,44 @@ h2, h3, h4 {
     border-left: 5px solid #00b0ff; /* Bright blue border */
 }
 /* st.warning - orange/yellow alert */
-[data-testid="stAlert"].st-emotion-cache-s8s00j { /* Specific class for warning */
+/* Note: Streamlit uses specific test IDs or class names for different alert types.
+   These selectors might need adjustment if Streamlit's internal HTML structure changes. */
+.st-emotion-cache-s8s00j.stAlert { /* Specific class for warning (as of Streamlit 1.x) */
     background-color: #5a4b2a; /* Darker orange/brown background */
     color: #ffe082; /* Lighter yellow text */
     border-left: 5px solid #ffca28; /* Bright yellow border */
 }
 
 /* st.error - red alert */
-[data-testid="stAlert"].st-emotion-cache-14u4d01 { /* Specific class for error */
+.st-emotion-cache-14u4d01.stAlert { /* Specific class for error (as of Streamlit 1.x) */
     background-color: #6d3a3a; /* Darker red background */
     color: #ffcdd2; /* Lighter red text */
     border-left: 5px solid #ef5350; /* Bright red border */
 }
 
 /* st.success - green alert */
-[data-testid="stAlert"].st-emotion-cache-1f0f9b6 { /* Specific class for success */
+.st-emotion-cache-1f0f9b6.stAlert { /* Specific class for success (as of Streamlit 1.x) */
     background-color: #3b6040; /* Darker green background */
     color: #c8e6c9; /* Lighter green text */
     border-left: 5px solid #66bb6a; /* Bright green border */
 }
 
+/* st.status - improved visual for status messages */
+[data-testid="stStatus"] {
+    border-radius: 8px;
+    padding: 15px 20px;
+    background-color: #2a2a47; /* Dark background */
+    border: 1px solid #3d3d5c;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    margin-bottom: 1.5rem;
+}
+[data-testid="stStatus"] .st-emotion-cache-1c19t05 { /* Icon/Spinner container */
+    color: #8be9fd; /* Icon color */
+}
+[data-testid="stStatus"] .st-emotion-cache-1w0x3ed { /* Message text */
+    color: #f8f8f2; /* Bright text */
+    font-size: 1.1em;
+}
 
 /* Metric Boxes - Dark Theme */
 .stMetric {
@@ -112,12 +130,31 @@ h2, h3, h4 {
     color: #8be9fd; /* Bright light blue for metric values */
 }
 .stMetric [data-testid="stMetricDelta"] {
-    color: #69f0ae; /* Light green for positive delta */
     font-size: 1.2em;
     font-weight: 600;
 }
+.stMetric [data-testid="stMetricDelta"]::before {
+    /* Custom delta indicator for better visibility */
+    display: inline-block;
+    width: 0;
+    height: 0;
+    vertical-align: middle;
+    margin-right: 5px;
+    border-style: solid;
+}
+.stMetric [data-testid="stMetricDelta"].positive {
+    color: #69f0ae; /* Light green for positive delta */
+}
+.stMetric [data-testid="stMetricDelta"].positive::before {
+    border-width: 0 4px 6px 4px;
+    border-color: transparent transparent #69f0ae transparent; /* Up arrow */
+}
 .stMetric [data-testid="stMetricDelta"].negative {
     color: #ff8a80; /* Light red for negative delta */
+}
+.stMetric [data-testid="stMetricDelta"].negative::before {
+    border-width: 6px 4px 0 4px;
+    border-color: #ff8a80 transparent transparent transparent; /* Down arrow */
 }
 
 
@@ -141,27 +178,36 @@ h2, h3, h4 {
     transform: translateY(-2px); /* Slight lift on hover */
 }
 
-/* Text Input - Dark Theme */
-.stTextInput>label { /* Style the label for input */
+/* Selectbox - Dark Theme */
+.stSelectbox>label {
     font-weight: 600;
-    color: #c0c0c0; /* Light gray label */
+    color: #c0c0c0;
 }
-
-.stTextInput>div>div>input {
+.stSelectbox [data-baseweb="select"] div[role="button"] {
+    background-color: #2a2a47;
+    border: 1px solid #3d3d5c;
     border-radius: 8px;
-    border: 1px solid #3d3d5c; /* Darker border */
-    padding: 12px 18px; /* More padding */
-    font-size: 1.1em;
+    color: #f8f8f2;
+    padding: 10px 15px;
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
-    background-color: #2a2a47; /* Dark background for input field */
-    color: #f8f8f2; /* Bright text in input field */
+}
+.stSelectbox [data-baseweb="select"] div[role="button"]:focus {
+    border-color: #8be9fd;
+    box-shadow: 0 0 0 3px rgba(139, 233, 253, 0.3);
+}
+.stSelectbox [data-baseweb="menu"] { /* Dropdown options */
+    background-color: #2a2a47;
+    border: 1px solid #3d3d5c;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+.stSelectbox [data-baseweb="menu"] li {
+    color: #e0e0e0;
+}
+.stSelectbox [data-baseweb="menu"] li:hover {
+    background-color: #3d3d5c;
 }
 
-.stTextInput>div>div>input:focus {
-    border-color: #8be9fd; /* Bright blue highlight on focus */
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(139, 233, 253, 0.3); /* Stronger focus halo */
-}
 
 /* Tabs - Dark Theme */
 .stTabs [data-baseweb="tab-list"] {
@@ -199,8 +245,9 @@ h2, h3, h4 {
 }
 
 /* Plotly Charts & General Containers - Dark Theme */
-.stPlotlyChart, .stContainer {
-    background-color: #2a2a47; /* Dark background for containers */
+/* General container style, applied when 'border=True' is used implicitly or explicitly */
+.st-emotion-cache-1jmve3k.e1f1d6gn0 { /* Targets container with border=True */
+    background-color: #2a2a47; /* Dark background for bordered containers */
     border: 1px solid #3d3d5c; /* Subtle border */
     border-radius: 10px;
     padding: 20px;
@@ -208,22 +255,27 @@ h2, h3, h4 {
     margin-bottom: 2rem; /* Consistent spacing */
 }
 
+/* Specifically target Plotly charts within containers if needed, but Plotly_dark handles most */
+.stPlotlyChart {
+    /* No specific background needed here, as plotly_dark theme handles chart internal background */
+    margin-bottom: 1rem; /* Adjust spacing below charts */
+}
+
+
 /* Specific styling for word cloud output to ensure background is white */
 /* Word Cloud library generates a white background image, so keep container white for contrast */
-.wordcloud-container {
-    background-color: #ffffff; /* Explicitly white for word cloud image */
-    border: 1px solid #d0d7de; /* Lighter border for contrast */
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* Softer shadow */
-    margin-bottom: 2rem;
-}
+/* This might be tricky to target reliably without direct Streamlit component class */
+/* If the above .st-emotion-cache-1jmve3k applies, it will have the dark background.
+   For word cloud, we need its specific matplotlib output to be on a white canvas.
+   The `background_color='white'` in WordCloud generator should handle the image itself. */
+
 
 /* Dataframe styling - Dark Theme */
 .stDataFrame {
     border-radius: 10px;
     overflow: hidden; /* Ensures borders are respected */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    margin-bottom: 2rem; /* Consistent spacing */
 }
 
 .stDataFrame table {
@@ -263,8 +315,5 @@ hr {
 
 /* Info message at the bottom - Dark Theme */
 /* Using a general stAlert selector for the bottom info if it's not caught by specific ones */
-[data-testid="stAlert"] {
-    margin-top: 2rem;
-    text-align: center;
-    font-style: italic;
-}
+/* If it's a normal st.info alert at the bottom, the .stAlert styles will apply. */
+/* No specific additional styling needed unless its structure changes or it needs unique presentation. */
