@@ -1,3 +1,4 @@
+import os 
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -6,7 +7,7 @@ import matplotlib.pyplot as plt
 import sys
 from pathlib import Path
 import re
-from collections import Counter
+from collections import Counter      
 
 # Set page config FIRST AND ONLY ONCE (at the very beginning)
 st.set_page_config(
@@ -18,8 +19,10 @@ st.set_page_config(
 
 # Then add parent directory to Python path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-# Ensure 'ytsenti' is correctly structured and accessible
+
+# Ensure both ytcom and ytesenti  is correctly structured and accessible
 try:
+    from ytcom import extract_video_id
     from ytsenti import fetch_comments_scrape, analyze_sentiment, analyze_intent
 except ImportError:
     st.error("Could not import 'ytsenti'. Make sure 'ytsenti.py' is in the parent directory.")
@@ -45,18 +48,10 @@ if 'current_video_id' not in st.session_state: # Track the video ID being displa
     st.session_state.current_video_id = None
 
 
-# Helper functions
-def extract_video_id(url):
-    # Updated regex for more robust ID extraction
-    match = re.search(r"(?:v=|youtu\.be/|embed/|live/|watch\?v=)([a-zA-Z0-9_-]{11})", url)
-    if not match:
-        raise ValueError("Invalid YouTube URL")
-    return match.group(1)
-
 # Caching for performance
 @st.cache_data(show_spinner="Fetching comments (this might take a moment)...")
 def cached_fetch_comments(url, max_comments):
-    return fetch_comments_scrape(url, max_comments=100) # Ensure max_comments is passed
+    return fetch_comments_scrape(url, max_comments=500) # Ensure max_comments is passed
 
 @st.cache_data(show_spinner="Analyzing sentiment and intent...")
 def cached_analyze_data(comments):
