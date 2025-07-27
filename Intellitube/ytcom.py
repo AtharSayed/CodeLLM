@@ -23,7 +23,7 @@ def translate_to_english(text):
     except Exception as e:
         return f"[Translation error: {str(e)}] {text}"
 
-def fetch_comments_scrape(url, max_comments=50):
+def fetch_comments_scrape(url, max_comments=500):
     video_id = extract_video_id(url)
     downloader = YoutubeCommentDownloader()
     comments = []
