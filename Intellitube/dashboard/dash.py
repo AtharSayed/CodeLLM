@@ -1018,7 +1018,7 @@ def display_results():
     <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
                 padding: 2rem; border-radius: 15px; margin-bottom: 2rem; text-align: center;">
         <h1 style="color: white; margin: 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
-            🎬 Analysis Results Dashboard
+            🎬 Analysis Dashboard
         </h1>
         <p style="color: rgba(255,255,255,0.9); margin: 0.5rem 0 0 0; font-size: 1.2rem;">
             Comprehensive YouTube Comment Analytics
@@ -1216,7 +1216,7 @@ def display_results():
                 padding: 1rem; border-radius: 10px; text-align: center; margin-top: 2rem;">
         <h3 style="color: white; margin: 0;">🎉 Analysis Complete!</h3>
         <p style="color: rgba(255,255,255,0.9); margin: 0.5rem 0 0 0;">
-            Powered by advanced NLP models with comprehensive sentiment and intent analysis
+            Intellitube Your Smart Youtube Analyser
         </p>
     </div>
     """, unsafe_allow_html=True)
