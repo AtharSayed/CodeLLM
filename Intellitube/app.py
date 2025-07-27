@@ -4,6 +4,7 @@ from transcorrection import correct_transcript
 from summarizer import summarize
 from qa_chain import setup_qa
 from ytsenti import fetch_comments_scrape, analyze_sentiment, analyze_intent
+from ytcom import extract_video_id
 import threading
 import traceback
 import json
@@ -34,12 +35,6 @@ def is_valid_youtube_url(url):
         r"(https?://)?(www\.)?(youtube\.com|youtu\.?be)/.+"
     )
     return youtube_regex.match(url) is not None
-
-def extract_video_id(url):
-    match = re.search(r"(?:v=|youtu\.be/)([a-zA-Z0-9_-]{11})", url)
-    if not match:
-        raise ValueError("Invalid YouTube URL")
-    return match.group(1)
 
 # ---------------------------
 # 🔁 Transcription & Summarization
@@ -130,7 +125,7 @@ def analyze_comments_sentiment(url, progress=gr.Progress()):
         return "❌ Invalid or missing YouTube URL.", None
 
     progress(0, desc="Fetching comments...")
-    comments = fetch_comments_scrape(url, max_comments=50)
+    comments = fetch_comments_scrape(url, max_comments=500)
     if not comments:
         return "❌ Failed to fetch comments or no comments found.", None
 
