@@ -103,18 +103,22 @@ def display_results(sent_summary, intent_summary, sent_detailed, intent_detailed
         print(f"{i}. {comment}")
         print(f"   🧠 Sentiment: {sentiment} ({round(s_score, 3)}), 🎯 Intent: {intent_label}")
 
-def main():
-    url = "https://www.youtube.com/watch?v=QwievZ1Tx-8&themeRefresh=1"
 
-    comments = fetch_comments_scrape(url, max_comments=50)
-    if not comments:
-        print("❌ No comments found.")
-        return
 
-    sentiment_summary, sentiment_detailed = analyze_sentiment(comments)
-    intent_summary, intent_detailed = analyze_intent(comments)
+# Testing Scraping Results :
 
-    display_results(sentiment_summary, intent_summary, sentiment_detailed, intent_detailed)
+# def main():
+#     url = "https://www.youtube.com/watch?v=QwievZ1Tx-8&themeRefresh=1"
+
+#     comments = fetch_comments_scrape(url, max_comments=50)
+#     if not comments:
+#         print("❌ No comments found.")
+#         return
+
+#     sentiment_summary, sentiment_detailed = analyze_sentiment(comments)
+#     intent_summary, intent_detailed = analyze_intent(comments)
+
+#     display_results(sentiment_summary, intent_summary, sentiment_detailed, intent_detailed)
 
 
 # --> Uncomment only for testing sentiment Analysis Functionality 
