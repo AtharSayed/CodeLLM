@@ -20,6 +20,7 @@ Give it any YouTube URL, and it will:
 7.  Displays all analysis results within a beautiful, clean, and concise **custom web interface**.
 8.  Provide a proper report with timestamp for download and document purpose of the entire process
 9.  Transcript correction using local Mistral via Ollama to fix transcription errors.
+10. Integrated a sentiment analysis dashboard using Streamlit with 10+ visuals and detailed insights from comments.
 
 ---
 
