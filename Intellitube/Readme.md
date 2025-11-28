@@ -39,26 +39,31 @@ Give it any YouTube URL, and it will:
 ## 📁 Project structure
 
 ```bash
-Directory structure:
-└── Intellitube/
-    ├── Readme.md
-    ├── app.py
-    ├── auth_app.py
-    ├── fast_transcriber.py
-    ├── qa_chain.py
-    ├── requirements.txt
-    ├── summarizer.py
-    ├── transcorrection.py
-    ├── transcriber.py
-    ├── ytcom.py
-    ├── ytsenti.py
-    ├── dashboard/
-    │   ├── dash.py
-    │   └── style.css
-    └── templates/
-        ├── home.html
-        ├── login.html
-        └── signup.html
+
+Intellitube/
+├── Readme.md                # Project documentation
+├── requirements.txt         # Python dependencies
+│
+├── app.py                   # Main app: runs the full pipeline + Gradio interface
+├── auth_app.py              # User login/signup system using Flask + MongoDB
+│
+├── fast_transcriber.py      # Faster-Whisper based YouTube audio transcriber
+├── transcriber.py           # Alternative/legacy transcription module
+├── transcorrection.py       # Fixes transcription errors using local Mistral
+├── summarizer.py            # Summarizes transcripts using Mistral via Ollama
+├── qa_chain.py              # Q&A engine using FAISS + embeddings + Mistral
+│
+├── ytcom.py                 # YouTube comment scraper + translation
+├── ytsenti.py               # Sentiment + intent analysis on YouTube comments
+│
+├── dashboard/
+│   ├── dash.py              # Streamlit dashboard for sentiment visualization
+│   └── style.css            # Dashboard styling
+│
+└── templates/
+    ├── home.html            # Main web UI (Flask/HTML frontend)
+    ├── login.html           # User login page
+    └── signup.html          # User signup page
 
 ```
 ---
