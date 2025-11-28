@@ -35,6 +35,33 @@ Give it any YouTube URL, and it will:
 
 ---
 
+## 📁 Project structure
+
+```bash
+Directory structure:
+└── Intellitube/
+    ├── Readme.md
+    ├── app.py
+    ├── auth_app.py
+    ├── fast_transcriber.py
+    ├── qa_chain.py
+    ├── requirements.txt
+    ├── summarizer.py
+    ├── transcorrection.py
+    ├── transcriber.py
+    ├── ytcom.py
+    ├── ytsenti.py
+    ├── dashboard/
+    │   ├── dash.py
+    │   └── style.css
+    └── templates/
+        ├── home.html
+        ├── login.html
+        └── signup.html
+
+```
+---
+
 ## 🌐 Web Interface (Frontend)
 
 Beyond the powerful backend, IntelliTube now boasts a custom-built, responsive, and visually appealing frontend for a seamless user experience it is built using Flask, a lightweight and powerful web framework for Python. Key features include:
